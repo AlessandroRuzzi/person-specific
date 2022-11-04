@@ -88,7 +88,10 @@ class GazeDataset(Dataset):
         assert len(self.selected_keys) > 0
 
         for num_i in range(0, len(self.selected_keys)):
-            file_path = os.path.join(self.path, self.selected_keys[num_i])
+            if is_train:
+                file_path = os.path.join(self.path, self.selected_keys[num_i][:-3] + "_nsample_1_iter_0.h5")
+            else:
+                file_path = os.path.join(self.path, self.selected_keys[num_i])
             self.hdfs[num_i] = h5py.File(file_path, 'r', swmr=True)
             # print('read file: ', os.path.join(self.path, self.selected_keys[num_i]))
             assert self.hdfs[num_i].swmr_mode
@@ -103,8 +106,8 @@ class GazeDataset(Dataset):
             print('load the file: ', index_file)
             if is_train:
                 content = np.loadtxt(index_file, dtype=np.float)
-                self.idx_to_kv = content[:, 0].astype(np.int)
-                #self.idx_to_kv += [i for i in len(content)]
+                #self.idx_to_kv = content[:, 0].astype(np.int)
+                self.idx_to_kv += [i for i in len(content)]
                 self.gaze_labels_train = content[:, 1:3]
             else:
                 self.idx_to_kv = np.loadtxt(index_file, dtype=np.int)
