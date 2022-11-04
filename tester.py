@@ -145,13 +145,6 @@ class Tester(object):
         if not os.path.exists(self.plot_dir):
             os.makedirs(self.plot_dir)
 
-        # configure tensorboard logging
-        if self.use_tensorboard:
-            tensorboard_dir = self.logs_dir + self.model_name
-            print('[*] Saving tensorboard logs to {}'.format(tensorboard_dir))
-            if not os.path.exists(tensorboard_dir):
-                os.makedirs(tensorboard_dir)
-            configure(tensorboard_dir)
 
         # build RAM model
         self.model = gaze_net()

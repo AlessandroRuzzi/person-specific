@@ -60,14 +60,14 @@ def get_train_test_loader(data_dir,
 
     all_subjects = datastore["test_specific"]
     # load dataset
-    folder_path = '/media/xucong/external/xgaze_224/test_person_specific/index_list'
+    folder_path = 'data'
     file_path = os.path.join(folder_path, all_subjects[subject_id][:-3] +'_calibration.txt')
-    train_set = GazeDataset(dataset_path=data_dir, keys_to_use=datastore["test_specific"],
+    train_set = GazeDataset(dataset_path="/data/aruzzi/person_specific", keys_to_use=datastore["test_specific"],
                             transform=trans, is_shuffle=is_shuffle, index_file=file_path, subject_id=subject_id, is_train=True)
     train_loader = DataLoader(train_set, batch_size=batch_size, num_workers=num_workers)
 
     file_path = os.path.join(folder_path, all_subjects[subject_id][:-3] + '_test.txt')
-    test_set = GazeDataset(dataset_path=data_dir, keys_to_use=datastore["test_specific"],
+    test_set = GazeDataset(dataset_path="/data/aruzzi/person_specific", keys_to_use=datastore["test_specific"],
                            transform=trans, is_shuffle=is_shuffle, index_file=file_path, subject_id=subject_id, is_train=False)
     test_loader = DataLoader(test_set, batch_size=20, num_workers=num_workers)  #batch_size could not be much bigger
 
@@ -104,6 +104,8 @@ class GazeDataset(Dataset):
             if is_train:
                 content = np.loadtxt(index_file, dtype=np.float)
                 self.idx_to_kv = content[:, 0].astype(np.int)
+                #self.idx_to_kv += [i for i in len(content)]
+                print("len content: ", len(content))
                 self.gaze_labels_train = content[:, 1:3]
             else:
                 self.idx_to_kv = np.loadtxt(index_file, dtype=np.int)

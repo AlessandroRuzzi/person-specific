@@ -133,7 +133,7 @@ class Trainer(object):
         self.lr_decay_interval = config.lr_decay_interval
 
         data_dir = '/media/xucong/external/xgaze_224/test_person_specific'
-        refer_list_file = os.path.join(data_dir, 'train_test_split.json')
+        refer_list_file = os.path.join('data/train_test_split.json')
         print('load the train file list from: ', refer_list_file)
 
         with open(refer_list_file, 'r') as f:
@@ -248,7 +248,7 @@ class Trainer(object):
         # load the most recent checkpoint
         if self.resume:
             self.load_checkpoint(best=True, is_strict=False,
-                                 input_file_name='ram_epoch_24_ckpt.pth.tar')
+                                 input_file_name='pretrained_24.tar')
                                 # input_file_name='../ckpt/reg_1/ram_1_100x2_0_random_ckpt.pth.tar')
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
 
@@ -347,7 +347,7 @@ class Trainer(object):
             mean_error = sum(error_all) / float(len(error_all))
             print('This is the final test. I want this line to be Test error {0:.3f}\t'.format(mean_error))
 
-            save_path = '/home/xucong/project/ETH-XGaze/website/CodaLab_GAZE21/ETH-XGaze/evaluation_code/submission_specific_eva'
+            save_path = '/local/home/aruzzi/personal_calibration_files'
             save_file_path = os.path.join(save_path, self.subject_id+'_test.txt')
             print('save the file:  ', save_file_path)
             prediction_all = np.array([x for x in prediction_all])
