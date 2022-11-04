@@ -167,7 +167,10 @@ class GazeDataset(Dataset):
         idx_current = self.idx_to_kv[idx]
 
         # if self.hdf is None:
-        self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0][:-3] + "_nsample_1_iter_0.h5"), 'r', swmr=True)
+        if self.is_train:
+            self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0][:-3] + "_nsample_1_iter_0.h5"), 'r', swmr=True)
+        else:
+            self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0]), 'r', swmr=True)
         assert self.hdf.swmr_mode
 
         # Get face image
