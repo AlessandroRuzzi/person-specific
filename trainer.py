@@ -308,7 +308,7 @@ class Trainer(object):
         toc = time.time()
         batch_time.update(toc-tic)
 
-        print('running time is ', batch_time.avg, 'gaze loss is: ', losses_gaze)
+        print('running time is ', batch_time.avg, 'gaze loss is: ', losses_gaze.avg)
         return accs.avg, losses_gaze.avg
 
     def test(self, is_final=False):
