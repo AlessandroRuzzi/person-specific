@@ -19,8 +19,7 @@ def main(config, subject_id=0):
     config_ini.sections()
     config_ini.read('config.ini')
 
-    data_dir = config_ini['path']['data_folder']
-    print(data_dir)
+    data_dir = "/data/aruzzi/person_specific"
 
     # ensure reproducibility
     torch.backends.cudnn.deterministic = True
