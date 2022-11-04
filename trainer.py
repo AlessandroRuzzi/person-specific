@@ -19,6 +19,7 @@ from tqdm import tqdm
 from utils import AverageMeter
 from model import gaze_net
 
+
 from util.error_calculation import mean_angular_error, classFeature2value, angular_error
 
 label_std = 1
