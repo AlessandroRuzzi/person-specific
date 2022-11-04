@@ -61,5 +61,5 @@ def main(config, subject_id=0):
 
 if __name__ == '__main__':
     config, unparsed = get_config()
-    for num_s in range(0, 1):
+    for num_s in range(0, 15):
         main(config, subject_id=num_s)
