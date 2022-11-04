@@ -89,7 +89,7 @@ class GazeDataset(Dataset):
 
         for num_i in range(0, len(self.selected_keys)):
             if is_train:
-                file_path = os.path.join(self.path, self.selected_keys[num_i][:-3] + "_nsample_2_iter_0.h5")
+                file_path = os.path.join(self.path, self.selected_keys[num_i][:-3] + "_nsample_3_iter_0.h5")
             else:
                 file_path = os.path.join(self.path, self.selected_keys[num_i])
             self.hdfs[num_i] = h5py.File(file_path, 'r', swmr=True)
@@ -168,7 +168,7 @@ class GazeDataset(Dataset):
 
         # if self.hdf is None:
         if self.is_train:
-            self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0][:-3] + "_nsample_2_iter_0.h5"), 'r', swmr=True)
+            self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0][:-3] + "_nsample_3_iter_0.h5"), 'r', swmr=True)
         else:
             self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0]), 'r', swmr=True)
         assert self.hdf.swmr_mode
