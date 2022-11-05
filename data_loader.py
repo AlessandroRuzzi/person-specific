@@ -91,8 +91,8 @@ class GazeDataset(Dataset):
 
         for num_i in range(0, len(self.selected_keys)):
             if is_train:
-                #file_path = os.path.join(self.path, self.selected_keys[num_i][:-3] + "_nsample_10_iter_0.h5")
-                file_path = os.path.join(self.path, self.selected_keys[num_i])
+                file_path = os.path.join(self.path, self.selected_keys[num_i][:-3] + "_nsample_1_iter_0.h5")
+                #file_path = os.path.join(self.path, self.selected_keys[num_i])
             else:
                 file_path = os.path.join(self.path, self.selected_keys[num_i])
             self.hdfs[num_i] = h5py.File(file_path, 'r', swmr=True)
@@ -110,8 +110,8 @@ class GazeDataset(Dataset):
             if is_train:
                 self.idx_to_kv = []
                 content = np.loadtxt(index_file, dtype=np.float)
-                self.idx_to_kv = content[:, 0].astype(np.int)
-                #self.idx_to_kv += [i for i in range(len(content))]
+                #self.idx_to_kv = content[:, 0].astype(np.int)
+                self.idx_to_kv += [i for i in range(len(content))]
                 #self.idx_to_kv = content[0:2, 0].astype(np.int)
                 self.gaze_labels_train = content[:, 1:3]
             else:
@@ -172,8 +172,8 @@ class GazeDataset(Dataset):
 
         # if self.hdf is None:
         if self.is_train:
-            #self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0][:-3] + "_nsample_10_iter_0.h5"), 'r', swmr=True)
-            self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0]), 'r', swmr=True)
+            self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0][:-3] + "_nsample_1_iter_0.h5"), 'r', swmr=True)
+            #self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0]), 'r', swmr=True)
         else:
             self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0]), 'r', swmr=True)
         assert self.hdf.swmr_mode
