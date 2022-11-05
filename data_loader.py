@@ -61,13 +61,15 @@ def get_train_test_loader(data_dir,
     all_subjects = datastore["test_specific"]
     # load dataset
     folder_path = 'data/subjects'
+    #data_path = "/local/home/aruzzi/personal_calibration_files"
+    data_path = "/data/aruzzi/personal_specific"
     file_path = os.path.join(folder_path, all_subjects[subject_id][:-3] +'_calibration.txt')
-    train_set = GazeDataset(dataset_path="/local/home/aruzzi/personal_calibration_files", keys_to_use=datastore["test_specific"],
+    train_set = GazeDataset(dataset_path= data_path, keys_to_use=datastore["test_specific"],
                             transform=trans, is_shuffle=is_shuffle, index_file=file_path, subject_id=subject_id, is_train=True)
     train_loader = DataLoader(train_set, batch_size=batch_size, num_workers=num_workers)
 
     file_path = os.path.join(folder_path, all_subjects[subject_id][:-3] + '_test.txt')
-    test_set = GazeDataset(dataset_path="/data/aruzzi/person_specific", keys_to_use=datastore["test_specific"],
+    test_set = GazeDataset(dataset_path=data_path, keys_to_use=datastore["test_specific"],
                            transform=trans, is_shuffle=is_shuffle, index_file=file_path, subject_id=subject_id, is_train=False)
     test_loader = DataLoader(test_set, batch_size=20, num_workers=num_workers)  #batch_size could not be much bigger
 
