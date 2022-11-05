@@ -17,7 +17,7 @@ import json
 
 from tqdm import tqdm
 from utils import AverageMeter
-from model import gaze_net
+from new_model import gaze_net
 
 
 from util.error_calculation import mean_angular_error, classFeature2value, angular_error
@@ -248,7 +248,7 @@ class Trainer(object):
         # load the most recent checkpoint
         if self.resume:
             self.load_checkpoint(best=True, is_strict=False,
-                                 input_file_name='ckpt/ram_epoch_24_ckpt.pth.tar')
+                                 input_file_name='ckpt/epoch_7_resnet_correct_ckpt.pth.tar')
                                 # input_file_name='../ckpt/reg_1/ram_1_100x2_0_random_ckpt.pth.tar')
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
 
@@ -292,7 +292,7 @@ class Trainer(object):
             self.batch_size = input_var.shape[0]
 
             # train gaze net
-            pred_gaze= self.model(input_var)
+            pred_gaze, pred_head= self.model(input_var)
 
             error_each_gaze = angular_error(pred_gaze.cpu().data.numpy(), target_var.cpu().data.numpy())
             error = np.mean(error_each_gaze)
@@ -327,7 +327,7 @@ class Trainer(object):
 
             self.batch_size = input_var.shape[0]
 
-            pred_gaze = self.model(input_var)
+            pred_gaze, pred_head = self.model(input_var)
             pred_gaze_np = pred_gaze.cpu().data.numpy()
             prediction_all.append(pred_gaze_np)
             target_gaze_np = target_var.cpu().data.numpy()
