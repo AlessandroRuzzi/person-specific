@@ -110,9 +110,9 @@ class GazeDataset(Dataset):
             if is_train:
                 self.idx_to_kv = []
                 content = np.loadtxt(index_file, dtype=np.float)
-                #self.idx_to_kv = content[:, 0].astype(np.int)
+                self.idx_to_kv = content[:, 0].astype(np.int)
                 #self.idx_to_kv += [i for i in range(len(content))]
-                self.idx_to_kv = content[0:2, 0].astype(np.int)
+                #self.idx_to_kv = content[0:2, 0].astype(np.int)
                 self.gaze_labels_train = content[:, 1:3]
             else:
                 self.idx_to_kv = np.loadtxt(index_file, dtype=np.int)
