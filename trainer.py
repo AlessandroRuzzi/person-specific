@@ -259,8 +259,8 @@ class Trainer(object):
         # self.model.eval()
         # self.test(is_final=True)
 
-        self.model.train()
-        self.train_func()
+        #self.model.train()
+        #self.train_func()
 
         print('We are now doing the final test')
         self.model.eval()
