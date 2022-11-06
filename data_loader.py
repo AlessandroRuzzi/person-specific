@@ -68,10 +68,10 @@ def get_train_test_loader(data_dir,
     all_subjects = datastore["test_specific"]
     # load dataset
     folder_path = 'data/subjects'
-    data_path = "/local/home/aruzzi/personal_calibration_files_2"
+    #data_path = "/local/home/aruzzi/personal_calibration_files_2"
     data_path_test = "/data/aruzzi/person_specific"
     file_path = os.path.join(folder_path, all_subjects[subject_id][:-3] +'_calibration.txt')
-    train_set = GazeDataset(dataset_path= data_path, keys_to_use=datastore["test_specific"],
+    train_set = GazeDataset(dataset_path= data_path_test, keys_to_use=datastore["test_specific"],
                             transform=trans, is_shuffle=is_shuffle, index_file=file_path, subject_id=subject_id, is_train=True)
     train_loader = DataLoader(train_set, batch_size=batch_size, num_workers=num_workers)
 
@@ -98,8 +98,8 @@ class GazeDataset(Dataset):
 
         for num_i in range(0, len(self.selected_keys)):
             if is_train:
-                file_path = os.path.join(self.path, self.selected_keys[num_i][:-3] + "_nsample_5_iter_0.h5")
-                #file_path = os.path.join(self.path, self.selected_keys[num_i])
+                #file_path = os.path.join(self.path, self.selected_keys[num_i][:-3] + "_nsample_5_iter_0.h5")
+                file_path = os.path.join(self.path, self.selected_keys[num_i])
             else:
                 file_path = os.path.join(self.path, self.selected_keys[num_i])
             self.hdfs[num_i] = h5py.File(file_path, 'r', swmr=True)
@@ -118,8 +118,8 @@ class GazeDataset(Dataset):
                 self.idx_to_kv = []
                 content = np.loadtxt(index_file, dtype=np.float)
                 #self.idx_to_kv = content[:, 0].astype(np.int)
-                self.idx_to_kv += [i for i in range(len(content))]
-                #self.idx_to_kv = content[0:2, 0].astype(np.int)
+                #self.idx_to_kv += [i for i in range(len(content))]
+                self.idx_to_kv = content[0:1, 0].astype(np.int)
                 self.gaze_labels_train = content[:, 1:3]
             else:
                 self.idx_to_kv = np.loadtxt(index_file, dtype=np.int)
@@ -179,8 +179,8 @@ class GazeDataset(Dataset):
 
         # if self.hdf is None:
         if self.is_train:
-            self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0][:-3] + "_nsample_5_iter_0.h5"), 'r', swmr=True)
-            #self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0]), 'r', swmr=True)
+            #self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0][:-3] + "_nsample_5_iter_0.h5"), 'r', swmr=True)
+            self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0]), 'r', swmr=True)
         else:
             self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0]), 'r', swmr=True)
         assert self.hdf.swmr_mode
@@ -193,6 +193,15 @@ class GazeDataset(Dataset):
         image = to_tensor(image)
 
         if not self.is_train:
+            self.hdf_mask = h5py.File(os.path.join("/data/aruzzi/xgaze_subjects_mask","xgaze_mask_" + self.selected_keys[0]), 'r', swmr=True)
+            face_mask = self.hdf_mask["head_mask"][idx_current, :]
+            kernel_2 = np.ones((3, 3), dtype=np.uint8)
+            face_mask = cv2.erode(face_mask, kernel_2, iterations=2)
+            face_mask = torch.from_numpy(face_mask)
+            nonhead_mask = face_mask < 0.5
+            nonhead_mask_c3b = nonhead_mask.expand(3, -1, -1)
+            image[nonhead_mask_c3b] = 1.0
+        else:
             self.hdf_mask = h5py.File(os.path.join("/data/aruzzi/xgaze_subjects_mask","xgaze_mask_" + self.selected_keys[0]), 'r', swmr=True)
             face_mask = self.hdf_mask["head_mask"][idx_current, :]
             kernel_2 = np.ones((3, 3), dtype=np.uint8)
