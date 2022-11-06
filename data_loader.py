@@ -193,7 +193,6 @@ class GazeDataset(Dataset):
         image = to_tensor(image)
 
         if not self.is_train:
-            print("here")
             self.hdf_mask = h5py.File(os.path.join("/data/aruzzi/xgaze_subjects_mask","xgaze_mask_" + self.selected_keys[0]), 'r', swmr=True)
             face_mask = self.hdf_mask["head_mask"][idx_current, :]
             kernel_2 = np.ones((3, 3), dtype=np.uint8)
