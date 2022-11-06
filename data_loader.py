@@ -45,6 +45,13 @@ trans = transforms.Compose([
                              std=[0.229, 0.224, 0.225]),
     ])
 
+to_tensor = transforms.Compose(
+    [
+        transforms.ToPILImage(),
+        transforms.ToTensor(),
+    ]
+)
+
 
 def get_train_test_loader(data_dir,
                            batch_size,
@@ -61,7 +68,7 @@ def get_train_test_loader(data_dir,
     all_subjects = datastore["test_specific"]
     # load dataset
     folder_path = 'data/subjects'
-    data_path = "/local/home/aruzzi/personal_calibration_files"
+    data_path = "/local/home/aruzzi/personal_calibration_files_2"
     data_path_test = "/data/aruzzi/person_specific"
     file_path = os.path.join(folder_path, all_subjects[subject_id][:-3] +'_calibration.txt')
     train_set = GazeDataset(dataset_path= data_path, keys_to_use=datastore["test_specific"],
@@ -183,6 +190,17 @@ class GazeDataset(Dataset):
 
         image = pixels
         image = image[:, :, [2, 1, 0]]  # from BGR to RGB
+        image = to_tensor(image)
+
+        if not self.is_train:
+            self.hdf_mask = h5py.File(os.path.join("/data/aruzzi/xgaze_subjects_mask","xgaze_mask_" + self.selected_keys[0]), 'r', swmr=True)
+            face_mask = self.hdf_mask["head_mask"][idx_current, :]
+            kernel_2 = np.ones((3, 3), dtype=np.uint8)
+            face_mask = cv2.erode(face_mask, kernel_2, iterations=2)
+            face_mask = torch.from_numpy(face_mask)
+            nonhead_mask = face_mask < 0.5
+            nonhead_mask_c3b = nonhead_mask.expand(3, -1, -1)
+            image[nonhead_mask_c3b] = 1.0
 
         image = self.transform(image)
 
