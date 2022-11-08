@@ -264,6 +264,8 @@ class Trainer(object):
         # self.test(is_final=True)
 
         self.model.train()
+        for param in self.model.parameters():
+            print(param.requires_grad)
         self.train_func()
 
         print('We are now doing the final test')
