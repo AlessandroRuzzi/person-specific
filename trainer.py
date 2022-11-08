@@ -265,6 +265,7 @@ class Trainer(object):
 
         self.model.train()
         for param in self.model.parameters():
+            print(param.names)
             print(param.requires_grad)
         self.train_func()
 
