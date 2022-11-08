@@ -68,7 +68,7 @@ def get_train_test_loader(data_dir,
     all_subjects = datastore["test_specific"]
     # load dataset
     folder_path = 'data/subjects'
-    data_path = "/local/home/aruzzi/personal_calibration_files_2"
+    data_path = "/local/home/aruzzi/personal_calibration_files_3"
     data_path_test = "/data/aruzzi/person_specific"
     file_path = os.path.join(folder_path, all_subjects[subject_id][:-3] +'_calibration.txt')
     train_set = GazeDataset(dataset_path= data_path, keys_to_use=datastore["test_specific"],
