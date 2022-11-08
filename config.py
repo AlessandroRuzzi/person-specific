@@ -18,7 +18,7 @@ glimpse_arg = add_argument_group('Network')
 
 # data params
 data_arg = add_argument_group('Data Params')
-data_arg.add_argument('--batch_size', type=int, default=200,
+data_arg.add_argument('--batch_size', type=int, default=100,
                       help='# of images in each batch of data')
 data_arg.add_argument('--num_workers', type=int, default=5,
                       help='# of subprocesses to use for data loading')
@@ -36,7 +36,7 @@ train_arg.add_argument('--momentum', type=float, default=0.5,
                        help='Nesterov momentum value')
 train_arg.add_argument('--epochs', type=int, default=25,
                        help='# of epochs to train for')
-train_arg.add_argument('--init_lr', type=float, default=0.0001,
+train_arg.add_argument('--init_lr', type=float, default=0.00001,
                        help='Initial learning rate value')
 train_arg.add_argument('--lr_patience', type=int, default=10,
                        help='Number of epochs to wait before reducing lr')
