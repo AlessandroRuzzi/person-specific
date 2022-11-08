@@ -248,13 +248,13 @@ class Trainer(object):
         # load the most recent checkpoint
         if self.resume:
             self.load_checkpoint(best=True, is_strict=False,
-                                 input_file_name='ckpt/epoch_7_resnet_correct_ckpt.pth.tar')
+                                 input_file_name='ckpt/epoch_16_resnet_correct_ckpt.pth.tar')
                                 # input_file_name='../ckpt/reg_1/ram_1_100x2_0_random_ckpt.pth.tar')
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
-            for param in self.model.parameters():
-                param.requires_grad = False
-            for param in self.model.gaze_fc.parameters():
-                param.requires_grad = True
+            #for param in self.model.parameters():
+            #    param.requires_grad = False
+            #for param in self.model.gaze_fc.parameters():
+            #    param.requires_grad = True
 
         # print("\n[*] Train on {} samples, test on {} samples".format(
         #     self.num_train, self.num_test)
@@ -263,8 +263,8 @@ class Trainer(object):
         # self.model.eval()
         # self.test(is_final=True)
 
-        self.model.train()
-        self.train_func()
+        #self.model.train()
+        #self.train_func()
 
         print('We are now doing the final test')
         self.model.eval()
