@@ -68,7 +68,7 @@ def get_train_test_loader(data_dir,
     all_subjects = datastore["test_specific"]
     # load dataset
     folder_path = 'data/subjects'
-    data_path = "/local/home/aruzzi/personal_calibration_files_2"
+    data_path = "/local/home/aruzzi/personal_calibration_files_4"
     data_path_test = "/data/aruzzi/person_specific"
     file_path = os.path.join(folder_path, all_subjects[subject_id][:-3] +'_calibration.txt')
     train_set = GazeDataset(dataset_path= data_path, keys_to_use=datastore["test_specific"],
@@ -98,7 +98,7 @@ class GazeDataset(Dataset):
 
         for num_i in range(0, len(self.selected_keys)):
             if is_train:
-                file_path = os.path.join(self.path, self.selected_keys[num_i][:-3] + "_nsample_9_iter_0.h5")
+                file_path = os.path.join(self.path, self.selected_keys[num_i][:-3] + "_nsample_50_iter_0.h5")
                 #file_path = os.path.join(self.path, self.selected_keys[num_i])
             else:
                 file_path = os.path.join(self.path, self.selected_keys[num_i])
@@ -179,7 +179,7 @@ class GazeDataset(Dataset):
 
         # if self.hdf is None:
         if self.is_train:
-            self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0][:-3] + "_nsample_9_iter_0.h5"), 'r', swmr=True)
+            self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0][:-3] + "_nsample_50_iter_0.h5"), 'r', swmr=True)
             #self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0]), 'r', swmr=True)
         else:
             self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0]), 'r', swmr=True)
