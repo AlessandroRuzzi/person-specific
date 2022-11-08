@@ -173,7 +173,7 @@ class Trainer(object):
         # )
 
         self.optimizer = optim.Adam(
-            self.model.parameters(), lr=self.lr, weight_decay=0.1 # ,  # betas=(0.9, 0.95), weight_decay=0.1
+            self.model.parameters(), lr=self.lr, #weight_decay=0.1 # ,  # betas=(0.9, 0.95), weight_decay=0.1
         )
         self.scheduler = StepLR(
             self.optimizer, step_size=self.lr_decay_interval, gamma=self.lr_decay_factor)
