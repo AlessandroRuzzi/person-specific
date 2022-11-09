@@ -173,7 +173,7 @@ class Trainer(object):
         # )
 
         self.optimizer = optim.Adam(
-            self.model.parameters(), lr=self.lr # ,  # betas=(0.9, 0.95), weight_decay=0.1
+            self.model.parameters(), lr=self.lr, weight_decay=0.1  # ,  # betas=(0.9, 0.95), weight_decay=0.1
         )
         self.scheduler = StepLR(
             self.optimizer, step_size=self.lr_decay_interval, gamma=self.lr_decay_factor)
@@ -351,7 +351,7 @@ class Trainer(object):
             mean_error = sum(error_all) / float(len(error_all))
             print('This is the final test. I want this line to be Test error {0:.3f}\t'.format(mean_error))
 
-            save_path = '/local/home/aruzzi/submission_specific_eva'
+            save_path = '/local/home/aruzzi/submission_specific_eva_1'
             save_file_path = os.path.join(save_path, self.subject_id+'_test.txt')
             print('save the file:  ', save_file_path)
             prediction_all = np.array([x for x in prediction_all])
