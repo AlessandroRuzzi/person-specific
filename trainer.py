@@ -173,6 +173,8 @@ class Trainer(object):
         #     self.model.parameters(), lr=self.lr, momentum=self.momentum,
         # )
         self.linear_model = linear_gaze_net()
+        if self.use_gpu:
+            self.linear_model.cuda()
         self.optimizer = optim.Adam(
             self.linear_model.parameters(), lr=self.lr, #weight_decay=1.0  # ,  # betas=(0.9, 0.95), weight_decay=0.1
         )
