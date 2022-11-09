@@ -18,6 +18,7 @@ import json
 from tqdm import tqdm
 from utils import AverageMeter
 from new_model import gaze_net
+from linear_model import gaze_net as linear_gaze_net 
 
 
 from util.error_calculation import mean_angular_error, classFeature2value, angular_error
@@ -171,9 +172,9 @@ class Trainer(object):
         # self.optimizer = optim.SGD(
         #     self.model.parameters(), lr=self.lr, momentum=self.momentum,
         # )
-
+        self.linear_model = linear_gaze_net()
         self.optimizer = optim.Adam(
-            self.model.parameters(), lr=self.lr, weight_decay=1.0  # ,  # betas=(0.9, 0.95), weight_decay=0.1
+            self.linear_model.parameters(), lr=self.lr, #weight_decay=1.0  # ,  # betas=(0.9, 0.95), weight_decay=0.1
         )
         self.scheduler = StepLR(
             self.optimizer, step_size=self.lr_decay_interval, gamma=self.lr_decay_factor)
@@ -253,8 +254,6 @@ class Trainer(object):
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
             for param in self.model.parameters():
                 param.requires_grad = False
-            for param in self.model.gaze_fc.parameters():
-                param.requires_grad = True
 
         # print("\n[*] Train on {} samples, test on {} samples".format(
         #     self.num_train, self.num_test)
@@ -297,6 +296,8 @@ class Trainer(object):
 
             # train gaze net
             pred_gaze, pred_head= self.model(input_var)
+
+            pred_gaze = self.linear_model(pred_gaze)
 
             error_each_gaze = angular_error(pred_gaze.cpu().data.numpy(), target_var.cpu().data.numpy())
             error = np.mean(error_each_gaze)
@@ -351,7 +352,7 @@ class Trainer(object):
             mean_error = sum(error_all) / float(len(error_all))
             print('This is the final test. I want this line to be Test error {0:.3f}\t'.format(mean_error))
 
-            save_path = '/local/home/aruzzi/submission_specific_eva_7'
+            save_path = '/local/home/aruzzi/submission_specific_eva'
             save_file_path = os.path.join(save_path, self.subject_id+'_test.txt')
             print('save the file:  ', save_file_path)
             prediction_all = np.array([x for x in prediction_all])
