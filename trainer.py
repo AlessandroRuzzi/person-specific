@@ -172,11 +172,11 @@ class Trainer(object):
         # self.optimizer = optim.SGD(
         #     self.model.parameters(), lr=self.lr, momentum=self.momentum,
         # )
-        self.linear_model = linear_gaze_net()
-        if self.use_gpu:
-            self.linear_model.cuda()
+        #self.linear_model = linear_gaze_net()
+        #if self.use_gpu:
+        #    self.linear_model.cuda()
         self.optimizer = optim.Adam(
-            self.linear_model.parameters(), lr=self.lr, #weight_decay=1.0  # ,  # betas=(0.9, 0.95), weight_decay=0.1
+            self.model.parameters(), lr=self.lr, #weight_decay=1.0  # ,  # betas=(0.9, 0.95), weight_decay=0.1
         )
         self.scheduler = StepLR(
             self.optimizer, step_size=self.lr_decay_interval, gamma=self.lr_decay_factor)
@@ -254,8 +254,8 @@ class Trainer(object):
                                  input_file_name='ckpt/epoch_7_resnet_correct_ckpt.pth.tar')
                                 # input_file_name='../ckpt/reg_1/ram_1_100x2_0_random_ckpt.pth.tar')
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
-            for param in self.model.parameters():
-                param.requires_grad = False
+            #for param in self.model.parameters():
+            #    param.requires_grad = False
 
         # print("\n[*] Train on {} samples, test on {} samples".format(
         #     self.num_train, self.num_test)
@@ -264,13 +264,13 @@ class Trainer(object):
         # self.model.eval()
         # self.test(is_final=True)
 
-        self.model.eval()
-        self.linear_model.train()
+        self.model.train()
+        #self.linear_model.train()
         self.train_func()
 
         print('We are now doing the final test')
         self.model.eval()
-        self.linear_model.eval()
+        #self.linear_model.eval()
         self.test(is_final=True)
         self.best_valid_acc = 0
 
@@ -301,7 +301,7 @@ class Trainer(object):
             # train gaze net
             pred_gaze, pred_head= self.model(input_var)
 
-            pred_gaze = self.linear_model(pred_gaze)
+            #pred_gaze = self.linear_model(pred_gaze)
 
             error_each_gaze = angular_error(pred_gaze.cpu().data.numpy(), target_var.cpu().data.numpy())
             error = np.mean(error_each_gaze)
@@ -337,7 +337,7 @@ class Trainer(object):
             self.batch_size = input_var.shape[0]
 
             pred_gaze, pred_head = self.model(input_var)
-            pred_gaze = self.linear_model(pred_gaze)
+            #pred_gaze = self.linear_model(pred_gaze)
             pred_gaze_np = pred_gaze.cpu().data.numpy()
             prediction_all.append(pred_gaze_np)
             target_gaze_np = target_var.cpu().data.numpy()
