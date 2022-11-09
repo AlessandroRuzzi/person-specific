@@ -251,10 +251,10 @@ class Trainer(object):
                                  input_file_name='ckpt/epoch_7_resnet_correct_ckpt.pth.tar')
                                 # input_file_name='../ckpt/reg_1/ram_1_100x2_0_random_ckpt.pth.tar')
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
-            #for param in self.model.parameters():
-            #    param.requires_grad = False
-            #for param in self.model.gaze_fc.parameters():
-            #    param.requires_grad = True
+            for param in self.model.parameters():
+                param.requires_grad = False
+            for param in self.model.gaze_fc.parameters():
+                param.requires_grad = True
 
         # print("\n[*] Train on {} samples, test on {} samples".format(
         #     self.num_train, self.num_test)
@@ -351,7 +351,7 @@ class Trainer(object):
             mean_error = sum(error_all) / float(len(error_all))
             print('This is the final test. I want this line to be Test error {0:.3f}\t'.format(mean_error))
 
-            save_path = '/local/home/aruzzi/submission_specific_eva_1'
+            save_path = '/local/home/aruzzi/submission_specific_eva'
             save_file_path = os.path.join(save_path, self.subject_id+'_test.txt')
             print('save the file:  ', save_file_path)
             prediction_all = np.array([x for x in prediction_all])
