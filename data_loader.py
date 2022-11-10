@@ -62,7 +62,7 @@ def get_train_test_loader(data_dir,
                            subject_id=0):
     # load dataset
     refer_list_file = os.path.join('data/train_test_split.json')
-    print('load the train file list from: ', refer_list_file)
+    #print('load the train file list from: ', refer_list_file)
 
     with open(refer_list_file, 'r') as f:
         datastore = json.load(f)
