@@ -116,7 +116,7 @@ class GazeDataset(Dataset):
                 n = self.hdfs[num_i]["face_patch"].shape[0]
                 self.idx_to_kv += [(num_i, i) for i in range(n)]
         else:
-            print('load the file: ', index_file)
+            #print('load the file: ', index_file)
             if is_train:
                 self.idx_to_kv = []
                 content = np.loadtxt(index_file, dtype=np.float)
