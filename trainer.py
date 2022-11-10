@@ -163,7 +163,7 @@ class Trainer(object):
             os.makedirs(self.plot_dir)
 
         # build RAM model
-        self.model = gaze_network()
+        self.model = gaze_net()
         if self.use_gpu:
             self.model.cuda()
 
