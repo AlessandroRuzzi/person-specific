@@ -222,7 +222,7 @@ class MAML(object):
         # Save MAML initial parameters
         #self.save_model_parameters()
 
-    def test(self, num_iterations=[1, 5, 10], num_repeats=20):
+    def test(self, lr_outer, num_iterations=[1, 5, 10], num_repeats=20):
         print('\nBeginning testing for meta-learned model with k = %d\n' % self.k)
         random.seed(4089213955)
         valid_model = copy.deepcopy(self.model)
@@ -234,7 +234,7 @@ class MAML(object):
         # yield the same calibration samples.
 
         model = copy.copy(self.model)
-        optim = torch.optim.SGD(model.parameters(), lr=self.lr_inner)
+        optim = torch.optim.Adam(self.model.parameters(), lr=lr_outer)
 
         for j in tqdm(range(10)):
             for t in range(5):
