@@ -171,7 +171,7 @@ class MAML(object):
                                     num_workers=4,
                                     is_shuffle=False,
                                     subject_id= subject
-                                )
+                                )[0]
                 # Get a task
                 for t, (input_img, target) in enumerate(data_loader):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
