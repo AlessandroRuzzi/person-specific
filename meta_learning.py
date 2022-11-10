@@ -90,6 +90,7 @@ def forward(model, data, return_predictions=False, train_data=None,
             for_backward=False, loss_function=nn_mean_angular_loss):
     model.train()
     x, y = data
+    print(y)
     y_hat = model(V(x))
     loss = loss_function(y_hat, V(y))
     if return_predictions:
