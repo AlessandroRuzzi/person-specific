@@ -268,13 +268,13 @@ class Trainer(object):
         # self.model.eval()
         # self.test(is_final=True)
 
-        self.meta_model = MAML(model = self.model, k = 2, train_tasks=self.train_loader, valid_tasks= self.train_loader)       
-        self.meta_model.train(steps_outer=100,steps_inner=2, lr_inner=1e-5, lr_outer=1e-3)
+        #self.meta_model = MAML(model = self.model, k = 2, train_tasks=self.train_loader, valid_tasks= self.train_loader)       
+        #self.meta_model.train(steps_outer=100,steps_inner=2, lr_inner=1e-5, lr_outer=1e-3)
         #self.meta_model.test(lr_outer=1e-3)
 
-        #self.model.train()
+        self.model.train()
         #self.linear_model.train()
-        #self.train_func()
+        self.train_func()
 
         print('We are now doing the final test')
         self.model.eval()
@@ -342,9 +342,9 @@ class Trainer(object):
 
             self.batch_size = input_var.shape[0]
 
-            #pred_gaze, pred_head = self.model(input_var)
+            pred_gaze, pred_head = self.model(input_var)
             #pred_gaze = self.linear_model(pred_gaze)
-            pred_gaze, pred_head = self.meta_model.model(input_var)
+            #pred_gaze, pred_head = self.meta_model.model(input_var)
             pred_gaze_np = pred_gaze.cpu().data.numpy()
             prediction_all.append(pred_gaze_np)
             target_gaze_np = target_var.cpu().data.numpy()
@@ -364,7 +364,7 @@ class Trainer(object):
             mean_error = sum(error_all) / float(len(error_all))
             print('This is the final test. I want this line to be Test error {0:.3f}\t'.format(mean_error))
 
-            save_path = '/local/home/aruzzi/submission_specific_eva'
+            save_path = '/local/home/aruzzi/submission_specific_eva_1'
             save_file_path = os.path.join(save_path, self.subject_id+'_test.txt')
             print('save the file:  ', save_file_path)
             prediction_all = np.array([x for x in prediction_all])

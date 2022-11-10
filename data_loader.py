@@ -101,7 +101,7 @@ class GazeDataset(Dataset):
 
         for num_i in range(0, len(self.selected_keys)):
             if is_train:
-                file_path = os.path.join(self.path, self.selected_keys[num_i][:-3] + "_nsample_9_iter_0.h5")
+                file_path = os.path.join(self.path, self.selected_keys[num_i][:-3] + "_nsample_1_iter_0.h5")
                 #file_path = os.path.join(self.path, self.selected_keys[num_i])
             else:
                 file_path = os.path.join(self.path, self.selected_keys[num_i])
@@ -154,58 +154,6 @@ class GazeDataset(Dataset):
             self.hdf.close()
             self.hdf = None
 
-    def create_sample(self,  indices, num_train, test = False):
-        """Create a sample of a task for meta-learning.
-        This consists of a x, y pair.
-        """
-        """
-        list_image = []
-        list_gaze = []
-        for i in indices:
-            image, gaze_label = self.__getitem__(i)
-            list_image.append(image)
-            list_gaze.append(gaze_label)
- 
-        list_image = torch.stack(list_image)
-        list_gaze = torch.stack(list_gaze)
-        """
-        list_image = torch.empty((len(indices),3,224,224))
-        list_gaze = torch.empty((len(indices),2))
-        for i in indices:
-            image, gaze_label = self.__getitem__(i)
-            if test:
-                list_image[i-num_train,:] = image
-                list_gaze[i-num_train,:] = gaze_label
-            else:
-                list_image[i,:] = image
-                list_gaze[i,:] = gaze_label
-        #xs, ys = np.array(xs).astype(np.float32), np.array(ys).astype(np.float32)
-        return (list_image.to(device),
-                list_gaze.to(device))
-
-    def sample(self, num_train=4, num_test=100,train  =False):
-        """Yields training and testing samples."""
-        #picked_task = random.randint(0, self.num_tasks - 1)
-        return self.sample_for_task(num_train=num_train,
-                                    num_test= 200 - num_train, train = train)
-
-    def sample_for_task(self, num_train=2, num_test=198, train = False):
-        #if self.train_indices[task] is self.test_indices[task]:
-            # This is for meta-training and meta-validation
-        #indices = random.sample(self.all_indices[task], num_train + num_test)
-        train_indices = [i for i in range(num_train)]
-        test_indices = [i+ num_train for i in range(num_test)]
-        #else:
-            # This is for meta-testing
-        #    train_indices = random.sample(self.train_indices[task], num_train)
-        #    test_indices = self.test_indices[task]
-        if train:
-            return (self.create_sample( train_indices, num_train),
-                    None)
-        else:
-            return (self.create_sample( train_indices, num_train),
-                    self.create_sample( test_indices, num_train,True))
-
     def preprocess_image(self, image):
         # # Change to expected format and values
         # # image = image[:, :, ::-1] - np.zeros_like(image) # BGR to RGB
@@ -234,7 +182,7 @@ class GazeDataset(Dataset):
 
         # if self.hdf is None:
         if self.is_train:
-            self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0][:-3] + "_nsample_9_iter_0.h5"), 'r', swmr=True)
+            self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0][:-3] + "_nsample_1_iter_0.h5"), 'r', swmr=True)
             #self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0]), 'r', swmr=True)
         else:
             self.hdf = h5py.File(os.path.join(self.path, self.selected_keys[0]), 'r', swmr=True)
