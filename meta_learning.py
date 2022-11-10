@@ -90,6 +90,8 @@ def forward(model, data, return_predictions=False, train_data=None,
             for_backward=False, loss_function=nn_mean_angular_loss):
     model.train()
     x, y = data
+    x = torch.reshape(x,(x.shape[0],1,224,224))
+    print(x.shape)
     print(y)
     y_hat = model(V(x))
     loss = loss_function(y_hat, V(y))
