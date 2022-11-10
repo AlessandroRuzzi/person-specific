@@ -164,7 +164,7 @@ class MAML(object):
                 self.meta_model = copy.deepcopy(self.model)
                 print("test")
                 # Get a task
-                for i, (input_img, target) in enumerate(self.train_task):
+                for i, (input_img, target) in enumerate(self.train_tasks):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
                     target_var = torch.autograd.Variable(target.float().cuda())
                     break
@@ -189,7 +189,7 @@ class MAML(object):
                 # Validation
                 losses = []
                 valid_model = copy.deepcopy(self.model)
-                for i, (input_img, target) in enumerate(self.train_task):
+                for i, (input_img, target) in enumerate(self.train_tasks):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
                     target_var = torch.autograd.Variable(target.float().cuda())
                     break
