@@ -19,7 +19,7 @@ from tqdm import tqdm
 from utils import AverageMeter
 from new_model import gaze_net
 from linear_model import gaze_net as linear_gaze_net 
-from meta_learning import MAML, Tasks, TestTasks
+from meta_learning import MAML
 
 
 from util.error_calculation import mean_angular_error, classFeature2value, angular_error
