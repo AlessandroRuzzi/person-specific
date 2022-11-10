@@ -77,9 +77,12 @@ def forward_and_backward(model, data, optim=None, create_graph=False,
     model.train()
     if optim is not None:
         optim.zero_grad()
+    print("here2")
     loss = forward(model, data, train_data=train_data, for_backward=True,
                    loss_function=loss_function)
+    print("here5")
     loss.backward(create_graph=create_graph, retain_graph=(optim is None))
+    print("here6")
     if optim is not None:
         # nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optim.step()
@@ -93,8 +96,10 @@ def forward(model, data, return_predictions=False, train_data=None,
     #x = torch.reshape(x,(2,3,224,224))
     #print(x.shape)
     #print(y)
+    print("here3")
     y_hat, _ = model(V(x))
     loss = loss_function(y_hat, V(y))
+    print("here4")
     if return_predictions:
         return y_hat.data.cpu().numpy()
     elif for_backward:
@@ -111,8 +116,8 @@ def forward(model, data, return_predictions=False, train_data=None,
 class MAML(object):
     def __init__(self, model, k, output_dir='./outputs/',
                  train_tasks=None, valid_tasks=None, no_tensorboard=False):
-        self.model = model.to(device)
-        self.meta_model = copy.deepcopy(model).to(device)
+        self.model = model
+        self.meta_model = copy.deepcopy(model)
 
         self.train_tasks = train_tasks
         self.valid_tasks = valid_tasks
@@ -149,21 +154,22 @@ class MAML(object):
         optimizer = torch.optim.Adam(self.model.parameters(), lr=lr_outer)
 
         # Model and optimizer for validation
-        valid_model = copy.deepcopy(self.model).to(device)
+        valid_model = copy.deepcopy(self.model)
         valid_optim = torch.optim.SGD(valid_model.parameters(), lr=self.lr_inner)
 
         for i in tqdm(range(steps_outer), disable=disable_tqdm):
             for j in range(steps_inner):
                 # Make copy of main model
                 print(j)
-                self.meta_model = copy.deepcopy(self.model).to(device)
+                self.meta_model = copy.deepcopy(self.model)
 
                 # Get a task
                 train_data, test_data = self.train_tasks.dataset.sample(num_train=self.k)
 
                 # Run the rest of the inner loop
+                print("here")
                 task_loss = self.inner_loop(train_data, self.lr_inner)
-
+                print("here1")
             # Calculate gradients on a held-out set
             new_task_loss = forward_and_backward(
                 self.meta_model, test_data, train_data=train_data,
@@ -177,7 +183,7 @@ class MAML(object):
                 # Validation
                 losses = []
                 for j in range(self.valid_tasks.num_tasks):
-                    valid_model = copy.deepcopy(self.model).to(device)
+                    valid_model = copy.deepcopy(self.model)
                     train_data, test_data = self.valid_tasks.sample_for_task(j, num_train=self.k)
                     train_loss = forward_and_backward(valid_model, train_data, valid_optim)
                     valid_loss = forward(valid_model, test_data, train_data=train_data)
