@@ -288,13 +288,13 @@ class MAML(object):
         with torch.no_grad():
             for name,p in self.meta_model.named_parameters():
                 if p.grad is None:
-                    print(name,"None")
+                    #print(name,"None")
                     #print(lr_inner)
                     #print(p.grad)
                     continue
                     #print(lr_inner*p.grad)
                 if(p.grad is not None):
-                    print(name,p.requires_grad)
+                    #print(name,p.requires_grad)
                     p.copy_(p-lr_inner*p.grad)
         #for name, param in self.meta_model.named_params():
         #    self.meta_model.set_param(name, param - lr_inner * param.grad)
