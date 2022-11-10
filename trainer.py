@@ -300,7 +300,7 @@ class Trainer(object):
             input_var = torch.autograd.Variable(input_img.float().cuda())
             target_var = torch.autograd.Variable(target.float().cuda())
             self.batch_size = input_var.shape[0]
-
+            input_var.requires_grad=True
             # train gaze net
             pred_gaze, pred_head= self.model(input_var)
 
