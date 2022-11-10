@@ -19,6 +19,7 @@ from tqdm import tqdm
 from utils import AverageMeter
 from new_model import gaze_net
 from linear_model import gaze_net as linear_gaze_net 
+from vgg_model import gaze_network
 from meta_learning import MAML
 
 
@@ -162,7 +163,7 @@ class Trainer(object):
             os.makedirs(self.plot_dir)
 
         # build RAM model
-        self.model = gaze_net()
+        self.model = gaze_network()
         if self.use_gpu:
             self.model.cuda()
 
@@ -253,12 +254,13 @@ class Trainer(object):
         # load the most recent checkpoint
         if self.resume:
             self.load_checkpoint(best=True, is_strict=False,
-                                 input_file_name='ckpt/epoch_16_resnet_correct_ckpt.pth.tar')
+                                 #input_file_name='ckpt/epoch_16_resnet_correct_ckpt.pth.tar')
+                                 input_file_name='ckpt/epoch_24_VGG_80_subj_ckpt.pth.tar')
                                 # input_file_name='../ckpt/reg_1/ram_1_100x2_0_random_ckpt.pth.tar')
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
             #for param in self.model.parameters():
             #    param.requires_grad = False
-        self.meta_model = MAML(model = self.model, k = 2, train_tasks=self.train_loader, valid_tasks= self.train_loader)
+        
         # print("\n[*] Train on {} samples, test on {} samples".format(
         #     self.num_train, self.num_test)
         # )
@@ -266,6 +268,7 @@ class Trainer(object):
         # self.model.eval()
         # self.test(is_final=True)
 
+        #self.meta_model = MAML(model = self.model, k = 2, train_tasks=self.train_loader, valid_tasks= self.train_loader)       
         #self.meta_model.train(steps_outer=5,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
 
         self.model.train()
@@ -300,7 +303,6 @@ class Trainer(object):
             input_var = torch.autograd.Variable(input_img.float().cuda())
             target_var = torch.autograd.Variable(target.float().cuda())
             self.batch_size = input_var.shape[0]
-            input_var.requires_grad=True
             # train gaze net
             pred_gaze, pred_head= self.model(input_var)
 
