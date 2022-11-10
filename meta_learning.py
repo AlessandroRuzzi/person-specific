@@ -281,7 +281,8 @@ class MAML(object):
 
         # Apply gradients
         with torch.no_grad():
-            for p in self.meta_model.parameters():
+            for name,p in self.meta_model.named_parameters():
+                print(name,p.requires_grad)
                 print(lr_inner)
                 print(p.grad)
                 print(lr_inner*p.grad)
