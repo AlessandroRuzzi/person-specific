@@ -288,7 +288,7 @@ class MAML(object):
         with torch.no_grad():
             for name,p in self.meta_model.named_parameters():
                 if p.grad is None:
-                    print(name,p.requires_grad)
+                    print(name,"None")
                     #print(lr_inner)
                     #print(p.grad)
                     continue
