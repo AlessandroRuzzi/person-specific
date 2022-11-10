@@ -253,4 +253,4 @@ class GazeDataset(Dataset):
             gaze_label = np.zeros((2))
         gaze_label = gaze_label.astype('float')
 
-        return image, torch.FloatTensor(gaze_label)
+        return image, gaze_label
