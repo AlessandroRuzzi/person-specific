@@ -153,7 +153,7 @@ class GazeDataset(Dataset):
             self.hdf.close()
             self.hdf = None
 
-    def create_sample(self,  indices):
+    def create_sample(self,  indices, num_train, test = False):
         """Create a sample of a task for meta-learning.
         This consists of a x, y pair.
         """
@@ -172,8 +172,12 @@ class GazeDataset(Dataset):
         list_gaze = torch.empty((len(indices),2))
         for i in indices:
             image, gaze_label = self.__getitem__(i)
-            list_image[i,:] = image
-            list_gaze[i,:] = gaze_label
+            if test:
+                list_image[i-num_train,:] = image
+                list_gaze[i-num_train,:] = gaze_label
+            else:
+                list_image[i,:] = image
+                list_gaze[i,:] = gaze_label
         #xs, ys = np.array(xs).astype(np.float32), np.array(ys).astype(np.float32)
         return (list_image.to(device),
                 list_gaze.to(device))
@@ -195,11 +199,11 @@ class GazeDataset(Dataset):
         #    train_indices = random.sample(self.train_indices[task], num_train)
         #    test_indices = self.test_indices[task]
         if train:
-            return (self.create_sample( train_indices),
+            return (self.create_sample( train_indices, num_train),
                     None)
         else:
-            return (self.create_sample( train_indices),
-                    self.create_sample( test_indices))
+            return (self.create_sample( train_indices, num_train),
+                    self.create_sample( test_indices, num_train,True))
 
     def preprocess_image(self, image):
         # # Change to expected format and values
