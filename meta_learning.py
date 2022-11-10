@@ -184,7 +184,7 @@ class MAML(object):
                 # Validation
                 losses = []
                 valid_model = copy.deepcopy(self.model)
-                train_data, test_data = self.valid_tasks.sample(num_train=self.k, train = False)
+                train_data, test_data = self.valid_tasks.dataset.sample(num_train=self.k, train = False)
                 train_loss = forward_and_backward(valid_model, train_data, valid_optim)
                 valid_loss = forward(valid_model, test_data, train_data=train_data)
                 losses.append((train_loss, valid_loss))
