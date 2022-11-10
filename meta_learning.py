@@ -183,12 +183,11 @@ class MAML(object):
             if (i + 1) % 1 == 0:
                 # Validation
                 losses = []
-                for j in range(self.valid_tasks.num_tasks):
-                    valid_model = copy.deepcopy(self.model)
-                    train_data, test_data = self.valid_tasks.sample_for_task(j, num_train=self.k)
-                    train_loss = forward_and_backward(valid_model, train_data, valid_optim)
-                    valid_loss = forward(valid_model, test_data, train_data=train_data)
-                    losses.append((train_loss, valid_loss))
+                valid_model = copy.deepcopy(self.model)
+                train_data, test_data = self.valid_tasks.sample(num_train=self.k, train = False)
+                train_loss = forward_and_backward(valid_model, train_data, valid_optim)
+                valid_loss = forward(valid_model, test_data, train_data=train_data)
+                losses.append((train_loss, valid_loss))
                 train_losses, valid_losses = zip(*losses)
                 print("train losses: ", train_losses)
                 print("valid losses: ", valid_losses)

@@ -157,6 +157,7 @@ class GazeDataset(Dataset):
         """Create a sample of a task for meta-learning.
         This consists of a x, y pair.
         """
+        """
         list_image = []
         list_gaze = []
         for i in indices:
@@ -166,6 +167,13 @@ class GazeDataset(Dataset):
  
         list_image = torch.stack(list_image)
         list_gaze = torch.stack(list_gaze)
+        """
+        list_image = torch.empty((len(indices),3,224,224))
+        list_gaze = torch.empty((len(indices),2))
+        for i in indices:
+            image, gaze_label = self.__getitem__(i)
+            list_image[i,:] = image
+            list_gaze[i,:] = gaze_label
         #xs, ys = np.array(xs).astype(np.float32), np.array(ys).astype(np.float32)
         return (list_image.to(device),
                 list_gaze.to(device))
