@@ -11,6 +11,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable as V
 from tqdm import tqdm
+import copy
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
@@ -108,7 +109,7 @@ class MAML(object):
     def __init__(self, model, k, output_dir='./outputs/',
                  train_tasks=None, valid_tasks=None, no_tensorboard=False):
         self.model = model
-        self.meta_model = model.clone()
+        self.meta_model = copy.deepcopy(model)
 
         self.train_tasks = train_tasks
         self.valid_tasks = valid_tasks
@@ -151,7 +152,7 @@ class MAML(object):
         for i in tqdm(range(steps_outer), disable=disable_tqdm):
             for j in range(steps_inner):
                 # Make copy of main model
-                self.meta_model.copy(self.model, same_var=True)
+                self.meta_model = copy.deepcopy(self.model)
 
                 # Get a task
                 train_data, test_data = self.train_tasks.sample(num_train=self.k)
@@ -172,7 +173,7 @@ class MAML(object):
                 # Validation
                 losses = []
                 for j in range(self.valid_tasks.num_tasks):
-                    valid_model.copy(self.model)
+                    valid_model = copy.deepcopy(self.model)
                     train_data, test_data = self.valid_tasks.sample_for_task(j, num_train=self.k)
                     train_loss = forward_and_backward(valid_model, train_data, valid_optim)
                     valid_loss = forward(valid_model, test_data, train_data=train_data)
