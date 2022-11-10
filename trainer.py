@@ -269,7 +269,7 @@ class Trainer(object):
         # self.test(is_final=True)
 
         self.meta_model = MAML(model = self.model, k = 2, train_tasks=self.train_loader, valid_tasks= self.train_loader)       
-        self.meta_model.train(steps_outer=40,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
+        self.meta_model.train(steps_outer=10,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
 
         #self.model.train()
         #self.linear_model.train()
