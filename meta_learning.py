@@ -72,13 +72,13 @@ def pitchyaw_to_vector(pitchyaws):
 """
 
 
-def forward_and_backward(model, data, optim=None, create_graph=False,
+def forward_and_backward(model, input, target, optim=None, create_graph=False,
                          train_data=None, loss_function=nn_mean_angular_loss):
     model.train()
     if optim is not None:
         optim.zero_grad()
     print("here2")
-    loss = forward(model, data, train_data=train_data, for_backward=True,
+    loss = forward(model, input,target, train_data=train_data, for_backward=True,
                    loss_function=loss_function)
     print("here5")
     loss.backward(create_graph=create_graph, retain_graph=(optim is None))
@@ -89,16 +89,16 @@ def forward_and_backward(model, data, optim=None, create_graph=False,
     return loss.data.cpu().numpy()
 
 
-def forward(model, data, return_predictions=False, train_data=None,
+def forward(model, input,target, return_predictions=False, train_data=None,
             for_backward=False, loss_function=nn_mean_angular_loss):
     model.train()
-    x, y = data
+    x, y = input, target
     #x = torch.reshape(x,(2,3,224,224))
     #print(x.shape)
     #print(y)
     print("here3")
-    y_hat, _ = model(V(x))
-    loss = loss_function(y_hat, V(y))
+    y_hat, _ = model(x)
+    loss = loss_function(y_hat, y)
     print("here4")
     if return_predictions:
         return y_hat.data.cpu().numpy()
@@ -164,16 +164,21 @@ class MAML(object):
                 self.meta_model = copy.deepcopy(self.model)
                 print("test")
                 # Get a task
-                train_data, test_data = self.train_tasks.dataset.sample(num_train=self.k, train = True)
+                for i, (input_img, target) in enumerate(self.train_task):
+                    input_var = torch.autograd.Variable(input_img.float().cuda())
+                    target_var = torch.autograd.Variable(target.float().cuda())
+                    break
+                #train_data, test_data = self.train_tasks.dataset.sample(num_train=self.k, train = True)
+                train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
+                print(train_input.shape,train_target.shape,test_input.shape,test_target.shape)
                 print("test2")
                 # Run the rest of the inner loop
                 print("here")
-                task_loss = self.inner_loop(train_data, self.lr_inner)
+                task_loss = self.inner_loop(train_input,train_target, self.lr_inner)
                 print("here1")
             # Calculate gradients on a held-out set
-            train_data, test_data = self.train_tasks.dataset.sample(num_train=self.k, train = False)
             new_task_loss = forward_and_backward(
-                self.meta_model, test_data, train_data=train_data,
+                self.meta_model, test_input, test_target,
             )
 
             # Update the main model
@@ -184,9 +189,14 @@ class MAML(object):
                 # Validation
                 losses = []
                 valid_model = copy.deepcopy(self.model)
-                train_data, test_data = self.valid_tasks.dataset.sample(num_train=self.k, train = False)
-                train_loss = forward_and_backward(valid_model, train_data, valid_optim)
-                valid_loss = forward(valid_model, test_data, train_data=train_data)
+                for i, (input_img, target) in enumerate(self.train_task):
+                    input_var = torch.autograd.Variable(input_img.float().cuda())
+                    target_var = torch.autograd.Variable(target.float().cuda())
+                    break
+                #train_data, test_data = self.train_tasks.dataset.sample(num_train=self.k, train = True)
+                train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
+                train_loss = forward_and_backward(valid_model, train_input,train_target, valid_optim)
+                valid_loss = forward(valid_model, test_input, test_target)
                 losses.append((train_loss, valid_loss))
                 train_losses, valid_losses = zip(*losses)
                 print("train losses: ", train_losses)
@@ -281,9 +291,9 @@ class MAML(object):
             print(out_msg)
         """
 
-    def inner_loop(self, train_data, lr_inner=0.01):
+    def inner_loop(self, train_input,train_target, lr_inner=0.01):
         # Forward-pass and calculate gradients on meta model
-        loss = forward_and_backward(self.meta_model, train_data,
+        loss = forward_and_backward(self.meta_model, train_input,train_target,
                                     create_graph=True)
 
         # Apply gradients

@@ -266,11 +266,11 @@ class Trainer(object):
         # self.model.eval()
         # self.test(is_final=True)
 
-        #self.meta_model.train(steps_outer=5,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
+        self.meta_model.train(steps_outer=5,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
 
-        self.model.train()
+        #self.model.train()
         #self.linear_model.train()
-        self.train_func()
+        #self.train_func()
 
         print('We are now doing the final test')
         self.model.eval()
@@ -299,7 +299,6 @@ class Trainer(object):
         for i, (input_img, target) in enumerate(data_loader):
             input_var = torch.autograd.Variable(input_img.float().cuda())
             target_var = torch.autograd.Variable(target.float().cuda())
-            print(input_var.shape)
             self.batch_size = input_var.shape[0]
 
             # train gaze net
@@ -308,7 +307,6 @@ class Trainer(object):
             #pred_gaze = self.linear_model(pred_gaze)
 
             error_each_gaze = angular_error(pred_gaze.cpu().data.numpy(), target_var.cpu().data.numpy())
-            print(error_each_gaze.shape)
             error = np.mean(error_each_gaze)
             acc = error
             accs.update(acc.item(), input_var.size()[0])
