@@ -20,6 +20,8 @@ import random
 from skimage import exposure
 import cv2
 
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+
 # two changes:
 # (1) pixel range is [0, 1] instead of [-1, 1]
 # (2) shuffle the list
@@ -150,6 +152,35 @@ class GazeDataset(Dataset):
         if self.hdf:
             self.hdf.close()
             self.hdf = None
+
+    def create_sample(self,  indices):
+        """Create a sample of a task for meta-learning.
+        This consists of a x, y pair.
+        """
+        xs, ys = zip(*[(self.__getitem__(i))
+                       for i in indices])
+        xs, ys = np.array(xs), np.array(ys)
+        return (torch.Tensor(xs).to(device),
+                torch.Tensor(ys).to(device))
+
+    def sample(self, num_train=4, num_test=100):
+        """Yields training and testing samples."""
+        #picked_task = random.randint(0, self.num_tasks - 1)
+        return self.sample_for_task(num_train=num_train,
+                                    num_test= 200 - num_train)
+
+    def sample_for_task(self, num_train=2, num_test=198):
+        #if self.train_indices[task] is self.test_indices[task]:
+            # This is for meta-training and meta-validation
+        #indices = random.sample(self.all_indices[task], num_train + num_test)
+        train_indices = [i for i in range(num_train)]
+        test_indices = [i+ num_train for i in range(num_test)]
+        #else:
+            # This is for meta-testing
+        #    train_indices = random.sample(self.train_indices[task], num_train)
+        #    test_indices = self.test_indices[task]
+        return (self.create_sample( train_indices),
+                self.create_sample( test_indices))
 
     def preprocess_image(self, image):
         # # Change to expected format and values

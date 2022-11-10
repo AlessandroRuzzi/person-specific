@@ -19,6 +19,7 @@ from tqdm import tqdm
 from utils import AverageMeter
 from new_model import gaze_net
 from linear_model import gaze_net as linear_gaze_net 
+from meta_learning import MAML, Tasks, TestTasks
 
 
 from util.error_calculation import mean_angular_error, classFeature2value, angular_error
@@ -175,6 +176,7 @@ class Trainer(object):
         #self.linear_model = linear_gaze_net()
         #if self.use_gpu:
         #    self.linear_model.cuda()
+        
         self.optimizer = optim.Adam(
             self.model.parameters(), lr=self.lr, #weight_decay=1.0  # ,  # betas=(0.9, 0.95), weight_decay=0.1
         )
@@ -251,22 +253,23 @@ class Trainer(object):
         # load the most recent checkpoint
         if self.resume:
             self.load_checkpoint(best=True, is_strict=False,
-                                 input_file_name='ckpt/epoch_7_resnet_correct_ckpt.pth.tar')
+                                 input_file_name='ckpt/epoch_16_resnet_correct_ckpt.pth.tar')
                                 # input_file_name='../ckpt/reg_1/ram_1_100x2_0_random_ckpt.pth.tar')
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
             #for param in self.model.parameters():
             #    param.requires_grad = False
-
+        self.meta_model = MAML(model = self.model, k = 2, train_tasks=self.train_loader, valid_tasks= self.train_loader)
         # print("\n[*] Train on {} samples, test on {} samples".format(
         #     self.num_train, self.num_test)
         # )
 
         # self.model.eval()
         # self.test(is_final=True)
+        self.meta_model.train(steps_outer=20000,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
 
-        self.model.train()
+        #self.model.train()
         #self.linear_model.train()
-        self.train_func()
+        #self.train_func()
 
         print('We are now doing the final test')
         self.model.eval()
@@ -336,8 +339,9 @@ class Trainer(object):
 
             self.batch_size = input_var.shape[0]
 
-            pred_gaze, pred_head = self.model(input_var)
+            #pred_gaze, pred_head = self.model(input_var)
             #pred_gaze = self.linear_model(pred_gaze)
+            pred_gaze, pred_head = self.meta_model.model(input_var)
             pred_gaze_np = pred_gaze.cpu().data.numpy()
             prediction_all.append(pred_gaze_np)
             target_gaze_np = target_var.cpu().data.numpy()
@@ -357,7 +361,7 @@ class Trainer(object):
             mean_error = sum(error_all) / float(len(error_all))
             print('This is the final test. I want this line to be Test error {0:.3f}\t'.format(mean_error))
 
-            save_path = '/local/home/aruzzi/submission_specific_eva_1'
+            save_path = '/local/home/aruzzi/submission_specific_eva'
             save_file_path = os.path.join(save_path, self.subject_id+'_test.txt')
             print('save the file:  ', save_file_path)
             prediction_all = np.array([x for x in prediction_all])
