@@ -143,11 +143,11 @@ class MAML(object):
         print('> Please check tensorboard logs for progress.\n')
 
         # Outer loop optimizer
-        optimizer = torch.optim.Adam(self.model.params(), lr=lr_outer)
+        optimizer = torch.optim.Adam(self.model.parameters(), lr=lr_outer)
 
         # Model and optimizer for validation
-        valid_model = self.model.clone()
-        valid_optim = torch.optim.SGD(valid_model.params(), lr=self.lr_inner)
+        valid_model = copy.deepcopy(self.model)
+        valid_optim = torch.optim.SGD(valid_model.parameters(), lr=self.lr_inner)
 
         for i in tqdm(range(steps_outer), disable=disable_tqdm):
             for j in range(steps_inner):
