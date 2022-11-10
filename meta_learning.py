@@ -119,7 +119,7 @@ class MAML(object):
         self.k = k
 
         self.output_dir = None
-        self.data_dir
+        self.data_dir = "/data/aruzzi/person_specific"
         self.tensorboard = None
         if output_dir is not None:
             self.output_dir = '%s/%s_%02d' % (output_dir, self.__class__.__name__, k)
