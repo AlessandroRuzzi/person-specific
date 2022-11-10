@@ -157,15 +157,16 @@ class GazeDataset(Dataset):
         """Create a sample of a task for meta-learning.
         This consists of a x, y pair.
         """
-        list_item = []
+        list_image = []
+        list_gaze = []
         for i in indices:
             image, gaze_label = self.__getitem__(i)
-            list_item.append((image, gaze_label))
-        xs, ys = zip(*list_item)
-        print(ys)
-        xs, ys = np.array(xs).astype(np.float32), np.array(ys).astype(np.float32)
-        return (torch.Tensor(xs).to(device),
-                torch.Tensor(ys).to(device))
+            list_image.append(image)
+            list_gaze.append(gaze_label)
+ 
+        #xs, ys = np.array(xs).astype(np.float32), np.array(ys).astype(np.float32)
+        return (torch.Tensor(list_image).to(device),
+                torch.Tensor(list_gaze).to(device))
 
     def sample(self, num_train=4, num_test=100):
         """Yields training and testing samples."""
