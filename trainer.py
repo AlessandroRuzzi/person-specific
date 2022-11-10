@@ -316,16 +316,6 @@ class Trainer(object):
             loss_gaze = F.l1_loss(pred_gaze, target_var)
             self.optimizer.zero_grad()
             loss_gaze.backward()
-            with torch.no_grad():
-                for name,p in self.model.named_parameters():
-                    if p.grad is None:
-                        print(name,"None")
-                        #print(lr_inner)
-                        #print(p.grad)
-                        #print(lr_inner*p.grad)
-                    if(p.grad is not None):
-                        print(name,p.requires_grad)
-                        #p.copy_(p-lr_inner*p.grad)
             self.optimizer.step()
             losses_gaze.update(loss_gaze.item(), input_var.size()[0])
 
