@@ -157,10 +157,11 @@ class GazeDataset(Dataset):
         """Create a sample of a task for meta-learning.
         This consists of a x, y pair.
         """
-        xs, ys = zip(*[self.__getitem__(i)
+        xs, ys = zip(*[(self.__getitem__(i))
                        for i in indices])
-        return (xs.to(device),
-                ys.to(device))
+        xs, ys = np.array(xs).astype(np.float32), np.array(ys).astype(np.float32)
+        return (torch.Tensor(xs).to(device),
+                torch.Tensor(ys).to(device))
 
     def sample(self, num_train=4, num_test=100):
         """Yields training and testing samples."""
