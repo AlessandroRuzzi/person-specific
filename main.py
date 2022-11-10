@@ -3,7 +3,7 @@ import torch
 from trainer import Trainer
 from config import get_config
 from utils import prepare_dirs, save_config
-from new_data_loader import get_train_test_loader
+from data_loader import get_train_test_loader
 
 import numpy as np
 import wandb

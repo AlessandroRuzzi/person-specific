@@ -235,13 +235,21 @@ class MAML(object):
         model = copy.copy(self.model)
         optim = torch.optim.SGD(model.parameters(), lr=self.lr_inner)
 
-        for t, (input_img, target) in enumerate(self.train_tasks):
+        for j in tqdm(range(10)):
+            for t in range(5):
+                self.meta_model = copy.copy(self.model)
+                for i, (input_img, target) in enumerate(self.train_tasks):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
                     target_var = torch.autograd.Variable(target.float().cuda())
                     break
-        train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
-        for j in range(np.amax(num_iterations)):
-            train_loss = forward_and_backward(model, train_input, train_target, optim)
+                train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
+                train_loss = self.inner_loop(train_input,train_target, self.lr_inner)
+        # Calculate gradients on a held-out set
+            new_task_loss = forward_and_backward(
+                self.meta_model, test_input, test_target,
+            )
+            optim.step()
+            optim.zero_grad()
 
         """
         
