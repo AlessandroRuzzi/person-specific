@@ -341,9 +341,9 @@ class Trainer(object):
 
             self.batch_size = input_var.shape[0]
 
-            #pred_gaze, pred_head = self.model(input_var)
+            pred_gaze, pred_head = self.model(input_var)
             #pred_gaze = self.linear_model(pred_gaze)
-            pred_gaze, pred_head = self.meta_model.model(input_var)
+            #pred_gaze, pred_head = self.meta_model.model(input_var)
             pred_gaze_np = pred_gaze.cpu().data.numpy()
             prediction_all.append(pred_gaze_np)
             target_gaze_np = target_var.cpu().data.numpy()
