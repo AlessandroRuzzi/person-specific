@@ -12,6 +12,7 @@ import torch.nn.functional as F
 from torch.autograd import Variable as V
 from tqdm import tqdm
 import copy
+from new_data_loader import get_train_test_loader
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
@@ -118,6 +119,7 @@ class MAML(object):
         self.k = k
 
         self.output_dir = None
+        self.data_dir
         self.tensorboard = None
         if output_dir is not None:
             self.output_dir = '%s/%s_%02d' % (output_dir, self.__class__.__name__, k)
@@ -141,6 +143,7 @@ class MAML(object):
     def train(self, steps_outer, steps_inner=1, lr_inner=0.01, lr_outer=0.001,
               disable_tqdm=False):
         self.lr_inner = lr_inner
+        random.seed(4089213955)
         print('\nBeginning meta-learning for k = %d' % self.k)
         print('> Please check tensorboard logs for progress.\n')
 
@@ -156,9 +159,21 @@ class MAML(object):
                 # Make copy of main model
                 #self.meta_model = copy.deepcopy(self.model)
                 self.meta_model = copy.copy(self.model)
-                
+                subject = random.randint(0,14)
+                if subject == self.train_tasks.dataset.subject_id:
+                    if subject != 14:
+                        subject +=1
+                    else:
+                        subject-=1
+                data_loader = get_train_test_loader(
+                                    data_dir=self.data_dir,
+                                    batch_size=200,
+                                    num_workers=4,
+                                    is_shuffle=False,
+                                    subject_id= subject
+                                )
                 # Get a task
-                for t, (input_img, target) in enumerate(self.train_tasks):
+                for t, (input_img, target) in enumerate(data_loader):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
                     target_var = torch.autograd.Variable(target.float().cuda())
                     break
@@ -191,7 +206,7 @@ class MAML(object):
                 # Validation
                 losses = []
                 valid_model = copy.deepcopy(self.model)
-                for i, (input_img, target) in enumerate(self.train_tasks):
+                for i, (input_img, target) in enumerate(data_loader):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
                     target_var = torch.autograd.Variable(target.float().cuda())
                     break
@@ -207,9 +222,9 @@ class MAML(object):
         # Save MAML initial parameters
         #self.save_model_parameters()
 
-    def test(self, test_tasks_list, num_iterations=[1, 5, 10], num_repeats=20):
+    def test(self, num_iterations=[1, 5, 10], num_repeats=20):
         print('\nBeginning testing for meta-learned model with k = %d\n' % self.k)
-        model = self.model.clone()
+        random.seed(4089213955)
 
         # IMPORTANT
         #
@@ -217,8 +232,19 @@ class MAML(object):
         # same, experiment results from multiple invocations of this script can
         # yield the same calibration samples.
 
+        model = copy.copy(self.model)
+        optim = torch.optim.SGD(model.params(), lr=self.lr_inner)
+
+        for t, (input_img, target) in enumerate(self.train_tasks):
+                    input_var = torch.autograd.Variable(input_img.float().cuda())
+                    target_var = torch.autograd.Variable(target.float().cuda())
+                    break
+        train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
+        for j in range(np.amax(num_iterations)):
+            train_loss = forward_and_backward(model, train_input, train_target, optim)
+
         """
-        random.seed(4089213955)
+        
 
         for test_set_name, test_tasks in test_tasks_list.items():
             predictions = OrderedDict()

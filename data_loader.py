@@ -91,6 +91,7 @@ class GazeDataset(Dataset):
         self.path = dataset_path
         self.hdfs = {}
         self.is_train = is_train
+        self.subject_id = subject_id
 
         # assert len(set(keys_to_use) - set(all_keys)) == 0
         # Select keys
