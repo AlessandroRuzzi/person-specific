@@ -91,8 +91,8 @@ def forward(model, data, return_predictions=False, train_data=None,
     model.train()
     x, y = data
     #x = torch.reshape(x,(2,3,224,224))
-    print(x.shape)
-    print(y)
+    #print(x.shape)
+    #print(y)
     y_hat, _ = model(V(x))
     loss = loss_function(y_hat, V(y))
     if return_predictions:
@@ -155,6 +155,7 @@ class MAML(object):
         for i in tqdm(range(steps_outer), disable=disable_tqdm):
             for j in range(steps_inner):
                 # Make copy of main model
+                print(j)
                 self.meta_model = copy.deepcopy(self.model)
 
                 # Get a task
@@ -172,7 +173,7 @@ class MAML(object):
             optimizer.step()
             optimizer.zero_grad()
 
-            if (i + 1) % 100 == 0:
+            if (i + 1) % 1 == 0:
                 # Validation
                 losses = []
                 for j in range(self.valid_tasks.num_tasks):
@@ -182,8 +183,8 @@ class MAML(object):
                     valid_loss = forward(valid_model, test_data, train_data=train_data)
                     losses.append((train_loss, valid_loss))
                 train_losses, valid_losses = zip(*losses)
-                print(train_losses)
-                print(valid_losses)
+                print("train losses: ", train_losses)
+                print("valid losses: ", valid_losses)
 
         # Save MAML initial parameters
         #self.save_model_parameters()
@@ -283,9 +284,10 @@ class MAML(object):
         with torch.no_grad():
             for name,p in self.meta_model.named_parameters():
                 if p.grad is None:
-                    print(name,p.requires_grad)
-                    print(lr_inner)
-                    print(p.grad)
+                    #print(name,p.requires_grad)
+                    #print(lr_inner)
+                    #print(p.grad)
+                    continue
                     #print(lr_inner*p.grad)
                 if(p.grad is not None):
                     p.copy_(p-lr_inner*p.grad)
