@@ -269,7 +269,7 @@ class Trainer(object):
         # self.test(is_final=True)
 
         self.meta_model = MAML(model = self.model, k = 2, train_tasks=self.train_loader, valid_tasks= self.train_loader)       
-        self.meta_model.train(steps_outer=5,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
+        self.meta_model.train(steps_outer=25,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
 
         #self.model.train()
         #self.linear_model.train()
@@ -341,9 +341,9 @@ class Trainer(object):
 
             self.batch_size = input_var.shape[0]
 
-            pred_gaze, pred_head = self.model(input_var)
+            #pred_gaze, pred_head = self.model(input_var)
             #pred_gaze = self.linear_model(pred_gaze)
-            #pred_gaze, pred_head = self.meta_model.model(input_var)
+            pred_gaze, pred_head = self.meta_model.model(input_var)
             pred_gaze_np = pred_gaze.cpu().data.numpy()
             prediction_all.append(pred_gaze_np)
             target_gaze_np = target_var.cpu().data.numpy()
