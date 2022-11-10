@@ -164,11 +164,11 @@ class GazeDataset(Dataset):
             list_image.append(image)
             list_gaze.append(gaze_label)
  
-        list_image = np.stack(list_image)
-        list_gaze = np.stack(list_gaze)
+        list_image = torch.stack(list_image)
+        list_gaze = torch.stack(list_gaze)
         #xs, ys = np.array(xs).astype(np.float32), np.array(ys).astype(np.float32)
-        return (torch.Tensor(list_image).to(device),
-                torch.Tensor(list_gaze).to(device))
+        return (list_image.to(device),
+                list_gaze.to(device))
 
     def sample(self, num_train=4, num_test=100):
         """Yields training and testing samples."""
@@ -260,4 +260,4 @@ class GazeDataset(Dataset):
             gaze_label = np.zeros((2))
         gaze_label = gaze_label.astype('float')
 
-        return np.array(image), np.array(gaze_label)
+        return image, gaze_label
