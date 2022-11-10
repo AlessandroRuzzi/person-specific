@@ -233,7 +233,7 @@ class MAML(object):
         # yield the same calibration samples.
 
         model = copy.copy(self.model)
-        optim = torch.optim.SGD(model.params(), lr=self.lr_inner)
+        optim = torch.optim.SGD(model.parameters(), lr=self.lr_inner)
 
         for t, (input_img, target) in enumerate(self.train_tasks):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
