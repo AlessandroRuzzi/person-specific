@@ -170,6 +170,16 @@ class MAML(object):
             )
 
             # Update the main model
+            with torch.no_grad():
+                for name,p in self.model.named_parameters():
+                    if p.grad is None:
+                        print(name,"None")
+                        #print(lr_inner)
+                        #print(p.grad)
+                        continue
+                        #print(lr_inner*p.grad)
+                    if(p.grad is not None):
+                        print(name,p.requires_grad)
             optimizer.step()
             optimizer.zero_grad()
 
