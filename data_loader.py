@@ -162,7 +162,7 @@ class GazeDataset(Dataset):
             image, gaze_label = self.__getitem__(i)
             list_item.append((image, gaze_label))
         xs, ys = zip(*list_item)
-        xs, ys = np.array(xs), np.array(ys)
+        #xs, ys = np.array(xs), np.array(ys)
         return (torch.Tensor(xs).to(device),
                 torch.Tensor(ys).to(device))
 
