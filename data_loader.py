@@ -170,13 +170,13 @@ class GazeDataset(Dataset):
         return (list_image.to(device),
                 list_gaze.to(device))
 
-    def sample(self, num_train=4, num_test=100):
+    def sample(self, num_train=4, num_test=100,train  =False):
         """Yields training and testing samples."""
         #picked_task = random.randint(0, self.num_tasks - 1)
         return self.sample_for_task(num_train=num_train,
-                                    num_test= 200 - num_train)
+                                    num_test= 200 - num_train, train = train)
 
-    def sample_for_task(self, num_train=2, num_test=198):
+    def sample_for_task(self, num_train=2, num_test=198, train = False):
         #if self.train_indices[task] is self.test_indices[task]:
             # This is for meta-training and meta-validation
         #indices = random.sample(self.all_indices[task], num_train + num_test)
@@ -186,8 +186,12 @@ class GazeDataset(Dataset):
             # This is for meta-testing
         #    train_indices = random.sample(self.train_indices[task], num_train)
         #    test_indices = self.test_indices[task]
-        return (self.create_sample( train_indices),
-                self.create_sample( test_indices))
+        if train:
+            return (self.create_sample( train_indices),
+                    None)
+        else:
+            return (self.create_sample( train_indices),
+                    self.create_sample( test_indices))
 
     def preprocess_image(self, image):
         # # Change to expected format and values
