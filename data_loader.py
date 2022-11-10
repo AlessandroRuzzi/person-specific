@@ -157,7 +157,7 @@ class GazeDataset(Dataset):
         """Create a sample of a task for meta-learning.
         This consists of a x, y pair.
         """
-        xs, ys = zip(*[(self.__getitem__(i))
+        xs, ys = zip(*[self.__getitem__(i)
                        for i in indices])
         return (xs.to(device),
                 ys.to(device))
