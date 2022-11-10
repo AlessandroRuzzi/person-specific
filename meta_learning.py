@@ -162,10 +162,10 @@ class MAML(object):
                 # Make copy of main model
                 print(j)
                 self.meta_model = copy.deepcopy(self.model)
-
+                print("test")
                 # Get a task
                 train_data, test_data = self.train_tasks.dataset.sample(num_train=self.k)
-
+                print("test2")
                 # Run the rest of the inner loop
                 print("here")
                 task_loss = self.inner_loop(train_data, self.lr_inner)
