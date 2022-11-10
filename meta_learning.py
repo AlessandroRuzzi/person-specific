@@ -93,7 +93,7 @@ def forward(model, data, return_predictions=False, train_data=None,
     #x = torch.reshape(x,(2,3,224,224))
     print(x.shape)
     print(y)
-    y_hat = model(V(x))
+    y_hat, _ = model(V(x))
     loss = loss_function(y_hat, V(y))
     if return_predictions:
         return y_hat.data.cpu().numpy()
