@@ -77,12 +77,11 @@ def forward_and_backward(model, input, target, optim=None, create_graph=False,
     model.train()
     if optim is not None:
         optim.zero_grad()
-    print("here2")
     loss = forward(model, input,target, train_data=train_data, for_backward=True,
                    loss_function=loss_function)
-    print("here5")
+    
     loss.backward(create_graph=create_graph, retain_graph=(optim is None))
-    print("here6")
+   
     if optim is not None:
         # nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         optim.step()
@@ -93,13 +92,8 @@ def forward(model, input,target, return_predictions=False, train_data=None,
             for_backward=False, loss_function=nn_mean_angular_loss):
     model.train()
     x, y = input, target
-    #x = torch.reshape(x,(2,3,224,224))
-    #print(x.shape)
-    #print(y)
-    print("here3")
     y_hat, _ = model(x)
     loss = loss_function(y_hat, y)
-    print("here4")
     if return_predictions:
         return y_hat.data.cpu().numpy()
     elif for_backward:
@@ -160,9 +154,8 @@ class MAML(object):
         for i in tqdm(range(steps_outer), disable=disable_tqdm):
             for j in range(steps_inner):
                 # Make copy of main model
-                print(j)
                 self.meta_model = copy.deepcopy(self.model)
-                print("test")
+                
                 # Get a task
                 for i, (input_img, target) in enumerate(self.train_tasks):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
@@ -170,12 +163,7 @@ class MAML(object):
                     break
                 #train_data, test_data = self.train_tasks.dataset.sample(num_train=self.k, train = True)
                 train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
-                print(train_input.shape,train_target.shape,test_input.shape,test_target.shape)
-                print("test2")
-                # Run the rest of the inner loop
-                print("here")
                 task_loss = self.inner_loop(train_input,train_target, self.lr_inner)
-                print("here1")
             # Calculate gradients on a held-out set
             new_task_loss = forward_and_backward(
                 self.meta_model, test_input, test_target,
