@@ -164,6 +164,8 @@ class GazeDataset(Dataset):
             list_image.append(image)
             list_gaze.append(gaze_label)
  
+        list_image = np.concatenate(list_image, axis=0)
+        list_gaze = np.concatenate(list_gaze, axis=0)
         #xs, ys = np.array(xs).astype(np.float32), np.array(ys).astype(np.float32)
         return (torch.Tensor(list_image).to(device),
                 torch.Tensor(list_gaze).to(device))
@@ -258,4 +260,4 @@ class GazeDataset(Dataset):
             gaze_label = np.zeros((2))
         gaze_label = gaze_label.astype('float')
 
-        return image, gaze_label
+        return np.array(image), np.array(gaze_label)
