@@ -157,9 +157,12 @@ class GazeDataset(Dataset):
         """Create a sample of a task for meta-learning.
         This consists of a x, y pair.
         """
-        xs, ys = zip(*[(self.__getitem__(i))
-                       for i in indices])
-        xs, ys = np.array(xs).astype(np.float32), np.array(ys).astype(np.float32)
+        list_item = []
+        for i in indices:
+            image, gaze_label = self.__getitem__(i)
+            list_item.append((image, gaze_label))
+        xs, ys = zip(*list_item)
+        xs, ys = np.array(xs), np.array(ys)
         return (torch.Tensor(xs).to(device),
                 torch.Tensor(ys).to(device))
 
