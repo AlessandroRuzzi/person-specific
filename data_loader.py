@@ -159,9 +159,8 @@ class GazeDataset(Dataset):
         """
         xs, ys = zip(*[(self.__getitem__(i))
                        for i in indices])
-        xs, ys = np.array(xs), np.array(ys)
-        return (torch.Tensor(xs).to(device),
-                torch.Tensor(ys).to(device))
+        return (xs.to(device),
+                ys.to(device))
 
     def sample(self, num_train=4, num_test=100):
         """Yields training and testing samples."""
