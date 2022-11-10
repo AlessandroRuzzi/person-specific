@@ -266,11 +266,11 @@ class Trainer(object):
         # self.model.eval()
         # self.test(is_final=True)
 
-        self.meta_model.train(steps_outer=5,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
+        #self.meta_model.train(steps_outer=5,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
 
-        #self.model.train()
+        self.model.train()
         #self.linear_model.train()
-        #self.train_func()
+        self.train_func()
 
         print('We are now doing the final test')
         self.model.eval()
@@ -314,6 +314,16 @@ class Trainer(object):
             loss_gaze = F.l1_loss(pred_gaze, target_var)
             self.optimizer.zero_grad()
             loss_gaze.backward()
+            with torch.no_grad():
+                for name,p in self.model.named_parameters():
+                    if p.grad is None:
+                        print(name,"None")
+                        #print(lr_inner)
+                        #print(p.grad)
+                        #print(lr_inner*p.grad)
+                    if(p.grad is not None):
+                        print(name,p.requires_grad)
+                        #p.copy_(p-lr_inner*p.grad)
             self.optimizer.step()
             losses_gaze.update(loss_gaze.item(), input_var.size()[0])
 
