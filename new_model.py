@@ -11,6 +11,11 @@ class gaze_net(nn.Module):
             nn.Linear(2048, 4),
         )
 
+    def clone(self, make_alpha=None):
+        new_model = self.__class__()
+        new_model.copy(self)
+        return new_model
+
     def forward(self, x):
         feature = self.gaze_network(x)
         feature = feature.view(feature.size(0), -1)
