@@ -286,7 +286,7 @@ class MAML(object):
                     print(name,p.requires_grad)
                     print(lr_inner)
                     print(p.grad)
-                    print(lr_inner*p.grad)
+                    #print(lr_inner*p.grad)
                 if(p.grad is not None):
                     p.copy_(p-lr_inner*p.grad)
         #for name, param in self.meta_model.named_params():
