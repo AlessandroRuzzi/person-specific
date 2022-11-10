@@ -206,7 +206,7 @@ class MAML(object):
                 # Validation
                 losses = []
                 valid_model = copy.deepcopy(self.model)
-                for i, (input_img, target) in enumerate(self.train_tasks):
+                for i, (input_img, target) in enumerate(data_loader):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
                     target_var = torch.autograd.Variable(target.float().cuda())
                     break
@@ -225,7 +225,8 @@ class MAML(object):
     def test(self, num_iterations=[1, 5, 10], num_repeats=20):
         print('\nBeginning testing for meta-learned model with k = %d\n' % self.k)
         random.seed(4089213955)
-
+        valid_model = copy.deepcopy(self.model)
+        valid_optim = torch.optim.SGD(valid_model.parameters(), lr=self.lr_inner)
         # IMPORTANT
         #
         # Sets consistent seed such that as long as --num-test-repeats is the
@@ -250,6 +251,23 @@ class MAML(object):
             )
             optim.step()
             optim.zero_grad()
+
+            if (j + 1) % 3 == 0:
+                # Validation
+                losses = []
+                valid_model = copy.deepcopy(self.model)
+                for i, (input_img, target) in enumerate(self.train_tasks):
+                    input_var = torch.autograd.Variable(input_img.float().cuda())
+                    target_var = torch.autograd.Variable(target.float().cuda())
+                    break
+                #train_data, test_data = self.train_tasks.dataset.sample(num_train=self.k, train = True)
+                train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
+                train_loss = forward_and_backward(valid_model, train_input,train_target, valid_optim)
+                valid_loss = forward(valid_model, test_input, test_target)
+                losses.append((train_loss, valid_loss))
+                train_losses, valid_losses = zip(*losses)
+                print("train losses: ", train_losses)
+                print("valid losses: ", valid_losses)
 
         """
         
