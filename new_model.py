@@ -12,6 +12,10 @@ class gaze_net(nn.Module):
             nn.Linear(2048, 4),
         )
 
+    def copy(self, other, same_var=False):
+        for name, param in other.named_parameters():
+            setattr(self, name, param)
+
     def forward(self, x):
         feature = self.gaze_network(x)
         feature = feature.view(feature.size(0), -1)
