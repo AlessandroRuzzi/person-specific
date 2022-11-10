@@ -12,9 +12,26 @@ class gaze_net(nn.Module):
             nn.Linear(2048, 4),
         )
 
+    def named_submodules(self):
+        return []
+
+    def set_param(self,name, param):
+        if '.' in name:
+            n = name.split('.')
+            module_name = n[0]
+            rest = '.'.join(n[1:])
+            for name, mod in self.named_submodules():
+                if module_name == name:
+                    mod.set_param(rest, param)
+                    break
+        else:
+            assert hasattr(self, name)
+            setattr(self, name, param)
+
     def copy(self, other, same_var=False):
         for name, param in other.named_parameters():
-            setattr(self, name, param)
+            self.set_param(name, param)
+            
 
     def forward(self, x):
         feature = self.gaze_network(x)

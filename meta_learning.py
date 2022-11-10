@@ -155,7 +155,7 @@ class MAML(object):
             for j in range(steps_inner):
                 # Make copy of main model
                 #self.meta_model = copy.deepcopy(self.model)
-                self.meta_model.copy(self.model)
+                self.meta_model = copy.copy(self.model)
                 
                 # Get a task
                 for i, (input_img, target) in enumerate(self.train_tasks):
@@ -165,7 +165,7 @@ class MAML(object):
                 #train_data, test_data = self.train_tasks.dataset.sample(num_train=self.k, train = True)
                 train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
                 task_loss = self.inner_loop(train_input,train_target, self.lr_inner)
-                
+
             # Calculate gradients on a held-out set
             new_task_loss = forward_and_backward(
                 self.meta_model, test_input, test_target,
