@@ -158,7 +158,7 @@ class MAML(object):
                 self.meta_model = copy.copy(self.model)
                 
                 # Get a task
-                for i, (input_img, target) in enumerate(self.train_tasks):
+                for t, (input_img, target) in enumerate(self.train_tasks):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
                     target_var = torch.autograd.Variable(target.float().cuda())
                     break
@@ -172,6 +172,7 @@ class MAML(object):
             )
 
             # Update the main model
+            """
             with torch.no_grad():
                 for name,p in self.model.named_parameters():
                     if p.grad is None:
@@ -182,10 +183,11 @@ class MAML(object):
                         #print(lr_inner*p.grad)
                     if(p.grad is not None):
                         print(name,p.requires_grad)
+            """
             optimizer.step()
             optimizer.zero_grad()
 
-            if (i + 1) % 1 == 0:
+            if (i + 1) % 5 == 0:
                 # Validation
                 losses = []
                 valid_model = copy.deepcopy(self.model)
