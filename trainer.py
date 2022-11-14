@@ -254,7 +254,7 @@ class Trainer(object):
         # load the most recent checkpoint
         if self.resume:
             self.load_checkpoint(best=True, is_strict=False,
-                                 input_file_name='ckpt/epoch_16_resnet_correct_ckpt.pth.tar')
+                                 input_file_name='ckpt/epoch_24_resnet_correct_ckpt.pth.tar')
                                  #input_file_name='ckpt/epoch_24_VGG_80_subj_ckpt.pth.tar')
                                 # input_file_name='../ckpt/reg_1/ram_1_100x2_0_random_ckpt.pth.tar')
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
@@ -272,9 +272,9 @@ class Trainer(object):
         #self.meta_model.train(steps_outer=100,steps_inner=2, lr_inner=1e-5, lr_outer=1e-3)
         #self.meta_model.test(lr_outer=1e-3)
 
-        self.model.train()
+        #self.model.train()
         #self.linear_model.train()
-        self.train_func()
+        #self.train_func()
 
         print('We are now doing the final test')
         self.model.eval()
