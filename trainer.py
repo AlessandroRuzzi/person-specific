@@ -284,7 +284,7 @@ class Trainer(object):
             input_lg.append(pred_gaze[0,:].cpu().data.numpy())
             target_lg.append(target_var[0,:].cpu().data.numpy())
 
-        self.poly = PolynomialFeatures(2)
+        self.poly = PolynomialFeatures(4)
         input_lg = self.poly.fit_transform(input_lg)
 
         print(input_lg)
