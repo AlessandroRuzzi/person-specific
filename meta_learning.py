@@ -180,11 +180,13 @@ class MAML(object):
                 #train_data, test_data = self.train_tasks.dataset.sample(num_train=self.k, train = True)
                 train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
                 task_loss = self.inner_loop(train_input,train_target, self.lr_inner)
+                print(task_loss)
 
             # Calculate gradients on a held-out set
             new_task_loss = forward_and_backward(
                 self.meta_model, test_input, test_target,
             )
+            print(new_task_loss)
 
             # Update the main model
             """
