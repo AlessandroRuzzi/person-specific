@@ -284,6 +284,7 @@ class Trainer(object):
             target_lg.append(target_var[0,:].cpu().data.numpy())
 
         self.reg_gt = Ridge().fit(input_lg, target_lg)
+        print(self.reg_gt.score(input_lg, target_lg))
 
         #self.meta_model = MAML(model = self.model, k = 2, train_tasks=self.train_loader, valid_tasks= self.train_loader)       
         #self.meta_model.train(steps_outer=100,steps_inner=2, lr_inner=1e-5, lr_outer=1e-3)
@@ -363,7 +364,7 @@ class Trainer(object):
             pred_gaze = self.reg_gt.predict(pred_gaze.cpu().data.numpy())
             #pred_gaze = self.linear_model(pred_gaze)
             #pred_gaze, pred_head = self.meta_model.model(input_var)
-            pred_gaze_np = pred_gaze.cpu().data.numpy()
+            pred_gaze_np = pred_gaze#.cpu().data.numpy()
             prediction_all.append(pred_gaze_np)
             target_gaze_np = target_var.cpu().data.numpy()
 
