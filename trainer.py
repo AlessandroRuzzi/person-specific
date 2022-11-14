@@ -260,10 +260,10 @@ class Trainer(object):
                                  #input_file_name='ckpt/epoch_24_VGG_80_subj_ckpt.pth.tar')
                                  #input_file_name='ckpt/ram_epoch_24_ckpt.pth.tar')
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
-            for param in self.model.parameters():
-                param.requires_grad = False
-            for param in self.model.gaze_fc.parameters():
-                param.requires_grad = True
+            #for param in self.model.parameters():
+            #    param.requires_grad = False
+            #for param in self.model.gaze_fc.parameters():
+            #    param.requires_grad = True
         
         """
         self.model.eval()
@@ -292,8 +292,8 @@ class Trainer(object):
 
         self.model.train()
         self.meta_model = MAML(model = self.model, k = 2, train_tasks=self.train_loader, valid_tasks= self.train_loader)       
-        self.meta_model.train(steps_outer=50,steps_inner=5, lr_inner=1e-5, lr_outer=5e-4)
-        self.meta_model.test(lr_outer=1e-5)
+        self.meta_model.train(steps_outer=50,steps_inner=5, lr_inner=1e-5, lr_outer=1e-4)
+        #self.meta_model.test(lr_outer=1e-5)
 
         #self.model.train()
         #self.linear_model.train()
