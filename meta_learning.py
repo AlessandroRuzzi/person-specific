@@ -155,25 +155,26 @@ class MAML(object):
         valid_optim = torch.optim.SGD(valid_model.parameters(), lr=self.lr_inner)
 
         for i in tqdm(range(steps_outer), disable=disable_tqdm):
-            #subject = random.randint(0,14)
-            #if subject == self.train_tasks.dataset.subject_id:
-            #    if subject != 14:
-            #        subject +=1
-            #    else:
-            #        subject-=1
-            #data_loader = get_train_test_loader(
-            #                    data_dir=self.data_dir,
-            #                    batch_size=200,
-            #                    num_workers=4,
-            #                    is_shuffle=False,
-            #                    subject_id= subject
-            #                )[0]
+            subject = random.randint(0,14)
+            if subject == self.train_tasks.dataset.subject_id:
+                if subject != 14:
+                   subject +=1
+                else:
+                   subject-=1
+            print(subject)
+            data_loader = get_train_test_loader(
+                                data_dir=self.data_dir,
+                                batch_size=200,
+                                num_workers=4,
+                                is_shuffle=False,
+                                subject_id= subject
+                            )[0]
             for j in range(steps_inner):
                 # Make copy of main model
                 #self.meta_model = copy.deepcopy(self.model)
                 self.meta_model = copy.copy(self.model)
                 # Get a task
-                for t, (input_img, target) in enumerate(self.train_tasks):
+                for t, (input_img, target) in enumerate(data_loader):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
                     target_var = torch.autograd.Variable(target.float().cuda())
                     break
@@ -204,11 +205,11 @@ class MAML(object):
             optimizer.step()
             optimizer.zero_grad()
 
-            if (i + 1) % 49 == 0:
+            if (i + 1) % 100 == 0:
                 # Validation
                 losses = []
                 valid_model = copy.deepcopy(self.model)
-                for i, (input_img, target) in enumerate(self.train_tasks):
+                for i, (input_img, target) in enumerate(data_loader):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
                     target_var = torch.autograd.Variable(target.float().cuda())
                     break
@@ -248,13 +249,13 @@ class MAML(object):
                 train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
                 train_loss = self.inner_loop(train_input,train_target, self.lr_inner)
         # Calculate gradients on a held-out set
-            new_task_loss = forward_and_backward(
-                self.meta_model, test_input, test_target,
-            )
-            optim.step()
-            optim.zero_grad()
+            #new_task_loss = forward_and_backward(
+            #    self.meta_model, test_input, test_target,
+            #)
+            #optim.step()
+            #optim.zero_grad()
 
-            if (j + 1) % 3 == 0:
+            if (j + 1) % 30 == 0:
                 # Validation
                 losses = []
                 valid_model = copy.deepcopy(self.model)
