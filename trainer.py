@@ -256,9 +256,9 @@ class Trainer(object):
         # load the most recent checkpoint
         if self.resume:
             self.load_checkpoint(best=True, is_strict=False,
-                                 #nput_file_name='ckpt/epoch_24_resnet_correct_ckpt.pth.tar')
+                                 input_file_name='ckpt/epoch_24_resnet_correct_ckpt.pth.tar')
                                  #input_file_name='ckpt/epoch_24_VGG_80_subj_ckpt.pth.tar')
-                                 input_file_name='ckpt/ram_epoch_24_ckpt.pth.tar')
+                                 #input_file_name='ckpt/ram_epoch_24_ckpt.pth.tar')
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
             #for param in self.model.parameters():
             #    param.requires_grad = False
