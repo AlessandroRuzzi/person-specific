@@ -202,7 +202,7 @@ class MAML(object):
             optimizer.step()
             optimizer.zero_grad()
 
-            if (i + 1) % 5 == 0:
+            if (i + 1) % 100 == 0:
                 # Validation
                 losses = []
                 valid_model = copy.deepcopy(self.model)

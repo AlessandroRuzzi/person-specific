@@ -18,7 +18,7 @@ glimpse_arg = add_argument_group('Network')
 
 # data params
 data_arg = add_argument_group('Data Params')
-data_arg.add_argument('--batch_size', type=int, default=1,
+data_arg.add_argument('--batch_size', type=int, default=200,
                       help='# of images in each batch of data')
 data_arg.add_argument('--num_workers', type=int, default=5,
                       help='# of subprocesses to use for data loading')
