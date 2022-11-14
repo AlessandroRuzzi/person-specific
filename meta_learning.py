@@ -168,13 +168,13 @@ class MAML(object):
             #                    is_shuffle=False,
             #                    subject_id= subject
             #                )[0]
-            train_list = []
-            val_list = []
-            for j in range(self.k):
-                train_list.append(random.randint(0,199))
-            for j in range(200):
-                if j not in train_list:
-                    val_list.append(j)
+            #train_list = []
+            #val_list = []
+            #for j in range(self.k):
+            #    train_list.append(random.randint(0,199))
+            #for j in range(200):
+            #    if j not in train_list:
+            #        val_list.append(j)
             for j in range(steps_inner):
                 # Make copy of main model
                 #self.meta_model = copy.deepcopy(self.model)
@@ -185,8 +185,8 @@ class MAML(object):
                     target_var = torch.autograd.Variable(target.float().cuda())
                     break
                 #train_data, test_data = self.train_tasks.dataset.sample(num_train=self.k, train = True)
-                #train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
-                train_input,train_target, test_input, test_target = input_var[train_list,:],target_var[train_list,:] , input_var[val_list,:],target_var[val_list,:]
+                train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
+                #train_input,train_target, test_input, test_target = input_var[train_list,:],target_var[train_list,:] , input_var[val_list,:],target_var[val_list,:]
                 task_loss = self.inner_loop(train_input,train_target, self.lr_inner)
                 print(task_loss)
 
@@ -263,29 +263,14 @@ class MAML(object):
                     break
                 train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
                 train_loss = self.inner_loop(train_input,train_target, self.lr_inner)
+                print(train_loss)
         # Calculate gradients on a held-out set
             new_task_loss = forward_and_backward(
                 self.meta_model, test_input, test_target,
             )
+            print(new_task_loss)
             optim.step()
             optim.zero_grad()
-
-            if (j + 1) % 3 == 0:
-                # Validation
-                losses = []
-                valid_model = copy.deepcopy(self.model)
-                for i, (input_img, target) in enumerate(self.train_tasks):
-                    input_var = torch.autograd.Variable(input_img.float().cuda())
-                    target_var = torch.autograd.Variable(target.float().cuda())
-                    break
-                #train_data, test_data = self.train_tasks.dataset.sample(num_train=self.k, train = True)
-                train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
-                train_loss = forward_and_backward(valid_model, train_input,train_target, valid_optim)
-                valid_loss = forward(valid_model, test_input, test_target)
-                losses.append((train_loss, valid_loss))
-                train_losses, valid_losses = zip(*losses)
-                print("train losses: ", train_losses)
-                print("valid losses: ", valid_losses)
 
         """
         
