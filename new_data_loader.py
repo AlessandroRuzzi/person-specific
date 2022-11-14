@@ -195,7 +195,7 @@ class GazeDataset(Dataset):
         image = image[:, :, [2, 1, 0]]  # from BGR to RGB
         image = to_tensor(image)
 
-        """
+        
         if not self.is_train:
             
             self.hdf_mask = h5py.File(os.path.join("/data/aruzzi/xgaze_subjects_mask","xgaze_mask_" + self.selected_keys[0]), 'r', swmr=True)
@@ -216,7 +216,7 @@ class GazeDataset(Dataset):
             nonhead_mask = face_mask < 0.5
             nonhead_mask_c3b = nonhead_mask.expand(3, -1, -1)
             image[nonhead_mask_c3b] = 1.0
-        """
+        
         image = self.transform(image)
 
         # head = self.hdfs[key]['face_head_pose'][idx, :]
