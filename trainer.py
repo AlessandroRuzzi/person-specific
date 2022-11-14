@@ -286,7 +286,7 @@ class Trainer(object):
             target_lg.append(target_var[0,:].cpu().data.numpy())
 
         self.poly = PolynomialFeatures(2)
-        input_lg = self.poly.fit_transform(input_lg)
+        #input_lg = self.poly.fit_transform(input_lg)
 
         #print(input_lg)
         self.reg_gt = Ridge().fit(input_lg, target_lg)
@@ -368,8 +368,8 @@ class Trainer(object):
 
             pred_gaze, pred_head = self.model(input_var)
             #pred_gaze = self.reg_gt.predict(pred_gaze.cpu().data.numpy())
-            pred_gaze = self.reg_gt.predict(self.poly.transform(pred_gaze.cpu().data.numpy()))
-            #pred_gaze = self.linear_model(pred_gaze)
+            #pred_gaze = self.reg_gt.predict(self.poly.transform(pred_gaze.cpu().data.numpy()))
+            pred_gaze = self.linear_model(pred_gaze)
             #pred_gaze, pred_head = self.meta_model.model(input_var)
             pred_gaze_np = pred_gaze#.cpu().data.numpy()
             prediction_all.append(pred_gaze_np)
@@ -390,7 +390,7 @@ class Trainer(object):
             mean_error = sum(error_all) / float(len(error_all))
             print('This is the final test. I want this line to be Test error {0:.3f}\t'.format(mean_error))
 
-            save_path = '/local/home/aruzzi/submission_specific_eva_1'
+            save_path = '/local/home/aruzzi/submission_specific_eva'
             save_file_path = os.path.join(save_path, self.subject_id+'_test.txt')
             print('save the file:  ', save_file_path)
             prediction_all = np.array([x for x in prediction_all])
