@@ -289,7 +289,7 @@ class Trainer(object):
         input_lg = self.poly.fit_transform(input_lg)
 
         #print(input_lg)
-        self.reg_gt = Ridge().fit(input_lg, target_lg)
+        self.reg_gt = LinearRegression().fit(input_lg, target_lg)
         print(self.reg_gt.score(input_lg, target_lg))
 
         #self.meta_model = MAML(model = self.model, k = 2, train_tasks=self.train_loader, valid_tasks= self.train_loader)       
