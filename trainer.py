@@ -286,7 +286,7 @@ class Trainer(object):
             target_lg.append(target_var[0,:].cpu().data.numpy())
 
         self.poly = PolynomialFeatures(3)
-        #input_lg = self.poly.fit_transform(input_lg)
+        input_lg = self.poly.fit_transform(input_lg)
 
         #print(input_lg)
         self.reg_gt = LinearRegression().fit(input_lg, target_lg)
@@ -367,8 +367,8 @@ class Trainer(object):
             self.batch_size = input_var.shape[0]
 
             pred_gaze, pred_head = self.model(input_var)
-            pred_gaze = self.reg_gt.predict(pred_gaze.cpu().data.numpy())
-            #pred_gaze = self.reg_gt.predict(self.poly.transform(pred_gaze.cpu().data.numpy()))
+            #pred_gaze = self.reg_gt.predict(pred_gaze.cpu().data.numpy())
+            pred_gaze = self.reg_gt.predict(self.poly.transform(pred_gaze.cpu().data.numpy()))
             #pred_gaze = self.linear_model(pred_gaze)
             #pred_gaze, pred_head = self.meta_model.model(input_var)
             pred_gaze_np = pred_gaze#.cpu().data.numpy()
