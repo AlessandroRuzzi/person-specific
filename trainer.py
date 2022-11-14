@@ -285,7 +285,7 @@ class Trainer(object):
             target_lg.append(target_var[0,:].cpu().data.numpy())
 
         poly = PolynomialFeatures(2)
-        poly.fit_transform(input_lg)
+        input_lg = poly.fit_transform(input_lg)
 
         print(input_lg)
         self.reg_gt = Ridge().fit(input_lg, target_lg)
