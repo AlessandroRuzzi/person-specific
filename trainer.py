@@ -22,6 +22,7 @@ from linear_model import gaze_net as linear_gaze_net
 from vgg_model import gaze_network
 from meta_learning import MAML
 from sklearn.linear_model import Ridge
+from sklearn.preprocessing import PolynomialFeatures
 
 
 from util.error_calculation import mean_angular_error, classFeature2value, angular_error
@@ -279,10 +280,14 @@ class Trainer(object):
             # train gaze net
             pred_gaze, pred_head= self.model(input_var)
 
-            print(pred_gaze[0,:])
+            
             input_lg.append(pred_gaze[0,:].cpu().data.numpy())
             target_lg.append(target_var[0,:].cpu().data.numpy())
 
+        poly = PolynomialFeatures(2)
+        poly.fit_transform(input_lg)
+
+        print(input_lg)
         self.reg_gt = Ridge().fit(input_lg, target_lg)
         print(self.reg_gt.score(input_lg, target_lg))
 
