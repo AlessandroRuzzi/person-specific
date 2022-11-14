@@ -121,7 +121,7 @@ class GazeDataset(Dataset):
                 content = np.loadtxt(index_file, dtype=np.float)
                 #self.idx_to_kv = content[:, 0].astype(np.int)
                 #self.idx_to_kv += [i for i in range(len(content))]
-                self.idx_to_kv = content[0:3, 0].astype(np.int)
+                self.idx_to_kv = content[43:47, 0].astype(np.int)
                 self.gaze_labels_train = content[:, 1:3]
             else:
                 self.idx_to_kv = np.loadtxt(index_file, dtype=np.int)
@@ -154,23 +154,6 @@ class GazeDataset(Dataset):
             self.hdf.close()
             self.hdf = None
 
-    def preprocess_image(self, image):
-        # # Change to expected format and values
-        # # image = image[:, :, ::-1] - np.zeros_like(image) # BGR to RGB
-        # image = image.transpose(2, 0, 1)
-        # # image = image.astype(np.uint8)
-        # image = image.astype(np.float32)
-        # # image *= 1.0 / 255.0
-        # # image -= 1.0
-
-        img_yuv = cv2.cvtColor(image, cv2.COLOR_BGR2YUV)
-        # equalize the histogram of the Y channel
-        img_yuv[:, :, 0] = cv2.equalizeHist(img_yuv[:, :, 0])
-        # convert the YUV image back to RGB format
-        image = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
-        image = image.transpose(2, 0, 1)
-
-        return image
 
     def __getitem__(self, idx):
         # for num_i in range(0, len(self.selected_keys)):
@@ -179,7 +162,7 @@ class GazeDataset(Dataset):
         #         assert self.hdfs[num_i].swmr_mode
 
         idx_current = self.idx_to_kv[idx]
-        
+        print(idx, idx_current)
 
         # if self.hdf is None:
         if self.is_train:
@@ -197,7 +180,6 @@ class GazeDataset(Dataset):
         image = to_tensor(image)
 
         
-        """
         self.hdf_mask = h5py.File(os.path.join("/data/aruzzi/xgaze_subjects_mask","xgaze_mask_" + self.selected_keys[0]), 'r', swmr=True)
         face_mask = self.hdf_mask["head_mask"][idx_current, :]
         kernel_2 = np.ones((3, 3), dtype=np.uint8)
@@ -206,7 +188,7 @@ class GazeDataset(Dataset):
         nonhead_mask = face_mask < 0.5
         nonhead_mask_c3b = nonhead_mask.expand(3, -1, -1)
         image[nonhead_mask_c3b] = 1.0
-        """
+
         
         image = self.transform(image)
 
