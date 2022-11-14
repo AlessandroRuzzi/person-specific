@@ -21,6 +21,7 @@ from new_model import gaze_net
 from linear_model import gaze_net as linear_gaze_net 
 from vgg_model import gaze_network
 from meta_learning import MAML
+from sklearn.linear_model import Ridge
 
 
 from util.error_calculation import mean_angular_error, classFeature2value, angular_error
@@ -268,6 +269,22 @@ class Trainer(object):
         # self.model.eval()
         # self.test(is_final=True)
 
+        input_lg = []
+        target_lg = []
+
+        for i, (input_img, target) in enumerate(self.train_loader):
+            input_var = torch.autograd.Variable(input_img.float().cuda())
+            target_var = torch.autograd.Variable(target.float().cuda())
+            self.batch_size = input_var.shape[0]
+            # train gaze net
+            pred_gaze, pred_head= self.model(input_var)
+
+            print(pred_gaze[0,:])
+            input_lg.append(pred_gaze[0,:])
+            target_lg.append(target_var[0,:])
+
+        self.reg_gt = Ridge().fit(input_lg, target_lg)
+
         #self.meta_model = MAML(model = self.model, k = 2, train_tasks=self.train_loader, valid_tasks= self.train_loader)       
         #self.meta_model.train(steps_outer=100,steps_inner=2, lr_inner=1e-5, lr_outer=1e-3)
         #self.meta_model.test(lr_outer=1e-3)
@@ -343,6 +360,7 @@ class Trainer(object):
             self.batch_size = input_var.shape[0]
 
             pred_gaze, pred_head = self.model(input_var)
+            pred_gaze = self.reg_gt.predict(pred_gaze)
             #pred_gaze = self.linear_model(pred_gaze)
             #pred_gaze, pred_head = self.meta_model.model(input_var)
             pred_gaze_np = pred_gaze.cpu().data.numpy()
