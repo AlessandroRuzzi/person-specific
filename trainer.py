@@ -280,8 +280,8 @@ class Trainer(object):
             pred_gaze, pred_head= self.model(input_var)
 
             print(pred_gaze[0,:])
-            input_lg.append(pred_gaze[0,:])
-            target_lg.append(target_var[0,:])
+            input_lg.append(pred_gaze[0,:].cpu().data.numpy())
+            target_lg.append(target_var[0,:].cpu().data.numpy())
 
         self.reg_gt = Ridge().fit(input_lg, target_lg)
 
@@ -360,7 +360,7 @@ class Trainer(object):
             self.batch_size = input_var.shape[0]
 
             pred_gaze, pred_head = self.model(input_var)
-            pred_gaze = self.reg_gt.predict(pred_gaze)
+            pred_gaze = self.reg_gt.predict(pred_gaze.cpu().data.numpy())
             #pred_gaze = self.linear_model(pred_gaze)
             #pred_gaze, pred_head = self.meta_model.model(input_var)
             pred_gaze_np = pred_gaze.cpu().data.numpy()
