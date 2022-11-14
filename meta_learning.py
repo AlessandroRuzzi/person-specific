@@ -218,6 +218,8 @@ class MAML(object):
             )
             print(new_task_loss)
 
+            optimizer.step()
+            optimizer.zero_grad()
             if (i + 1) % 100 == 0:
                 # Validation
                 losses = []
