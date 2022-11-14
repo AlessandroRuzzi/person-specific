@@ -179,6 +179,7 @@ class GazeDataset(Dataset):
         #         assert self.hdfs[num_i].swmr_mode
 
         idx_current = self.idx_to_kv[idx]
+        print(idx, idx_current)
 
         # if self.hdf is None:
         if self.is_train:
