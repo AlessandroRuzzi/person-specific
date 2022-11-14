@@ -213,13 +213,6 @@ class MAML(object):
             optimizer.step()
             optimizer.zero_grad()
 
-            new_task_loss = forward_and_backward(
-                self.meta_model, test_input, test_target,
-            )
-            print(new_task_loss)
-
-            optimizer.step()
-            optimizer.zero_grad()
             if (i + 1) % 100 == 0:
                 # Validation
                 losses = []
