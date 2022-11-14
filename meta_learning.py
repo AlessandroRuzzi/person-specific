@@ -195,6 +195,10 @@ class MAML(object):
                 self.meta_model, test_input, test_target,
             )
             print(new_task_loss)
+            new_task_loss = forward_and_backward(
+                self.meta_model, test_input, test_target,
+            )
+            print(new_task_loss)
 
             # Update the main model
             """
