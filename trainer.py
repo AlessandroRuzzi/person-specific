@@ -21,7 +21,7 @@ from new_model import gaze_net
 from linear_model import gaze_net as linear_gaze_net 
 from vgg_model import gaze_network
 from meta_learning import MAML
-from sklearn.linear_model import Ridge
+from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
 
 
@@ -285,8 +285,8 @@ class Trainer(object):
             input_lg.append(pred_gaze[0,:].cpu().data.numpy())
             target_lg.append(target_var[0,:].cpu().data.numpy())
 
-        self.poly = PolynomialFeatures(2)
-        #input_lg = self.poly.fit_transform(input_lg)
+        self.poly = PolynomialFeatures(6)
+        input_lg = self.poly.fit_transform(input_lg)
 
         #print(input_lg)
         self.reg_gt = Ridge().fit(input_lg, target_lg)
@@ -367,8 +367,8 @@ class Trainer(object):
             self.batch_size = input_var.shape[0]
 
             pred_gaze, pred_head = self.model(input_var)
-            pred_gaze = self.reg_gt.predict(pred_gaze.cpu().data.numpy())
-            #pred_gaze = self.reg_gt.predict(self.poly.transform(pred_gaze.cpu().data.numpy()))
+            #pred_gaze = self.reg_gt.predict(pred_gaze.cpu().data.numpy())
+            pred_gaze = self.reg_gt.predict(self.poly.transform(pred_gaze.cpu().data.numpy()))
             #pred_gaze = self.linear_model(pred_gaze)
             #pred_gaze, pred_head = self.meta_model.model(input_var)
             pred_gaze_np = pred_gaze#.cpu().data.numpy()
