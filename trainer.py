@@ -17,7 +17,7 @@ import json
 
 from tqdm import tqdm
 from utils import AverageMeter
-from new_model import gaze_net
+from model import gaze_net
 from linear_model import gaze_net as linear_gaze_net 
 from vgg_model import gaze_network
 from meta_learning import MAML
@@ -256,9 +256,9 @@ class Trainer(object):
         # load the most recent checkpoint
         if self.resume:
             self.load_checkpoint(best=True, is_strict=False,
-                                 input_file_name='ckpt/epoch_24_resnet_correct_ckpt.pth.tar')
+                                 #input_file_name='ckpt/epoch_24_resnet_correct_ckpt.pth.tar')
                                  #input_file_name='ckpt/epoch_24_VGG_80_subj_ckpt.pth.tar')
-                                 #input_file_name='ckpt/ram_epoch_24_ckpt.pth.tar')
+                                 input_file_name='ckpt/ram_epoch_24_ckpt.pth.tar')
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
             #for param in self.model.parameters():
             #    param.requires_grad = False
@@ -279,7 +279,7 @@ class Trainer(object):
             target_var = torch.autograd.Variable(target.float().cuda())
             self.batch_size = input_var.shape[0]
             # train gaze net
-            pred_gaze, pred_head= self.model(input_var)
+            pred_gaze= self.model(input_var)
             #print(pred_gaze, target_var)
             input_lg.append(pred_gaze[0,:].cpu().data.numpy())
             target_lg.append(target_var[0,:].cpu().data.numpy())
@@ -330,7 +330,7 @@ class Trainer(object):
             target_var = torch.autograd.Variable(target.float().cuda())
             self.batch_size = input_var.shape[0]
             # train gaze net
-            pred_gaze, pred_head= self.model(input_var)
+            pred_gaze= self.model(input_var)
 
             #pred_gaze = self.linear_model(pred_gaze)
 
