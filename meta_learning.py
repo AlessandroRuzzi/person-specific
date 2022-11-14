@@ -170,11 +170,11 @@ class MAML(object):
             #                )[0]
             train_list = []
             val_list = []
-            for i in range(self.k):
+            for j in range(self.k):
                 train_list.append(random.randint(0,199))
-            for i in range(200):
-                if i not in train_list:
-                    val_list.append(i)
+            for j in range(200):
+                if j not in train_list:
+                    val_list.append(j)
             for j in range(steps_inner):
                 # Make copy of main model
                 #self.meta_model = copy.deepcopy(self.model)
