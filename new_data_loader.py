@@ -179,7 +179,7 @@ class GazeDataset(Dataset):
         #         assert self.hdfs[num_i].swmr_mode
 
         idx_current = self.idx_to_kv[idx]
-        print(idx, idx_current)
+        
 
         # if self.hdf is None:
         if self.is_train:
@@ -197,7 +197,7 @@ class GazeDataset(Dataset):
         image = to_tensor(image)
 
         
-            
+        """
         self.hdf_mask = h5py.File(os.path.join("/data/aruzzi/xgaze_subjects_mask","xgaze_mask_" + self.selected_keys[0]), 'r', swmr=True)
         face_mask = self.hdf_mask["head_mask"][idx_current, :]
         kernel_2 = np.ones((3, 3), dtype=np.uint8)
@@ -206,7 +206,7 @@ class GazeDataset(Dataset):
         nonhead_mask = face_mask < 0.5
         nonhead_mask_c3b = nonhead_mask.expand(3, -1, -1)
         image[nonhead_mask_c3b] = 1.0
-
+        """
         
         image = self.transform(image)
 
