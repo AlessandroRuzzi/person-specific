@@ -296,9 +296,9 @@ class Trainer(object):
         #self.meta_model.train(steps_outer=70,steps_inner=5, lr_inner=1e-5, lr_outer=1e-5)
         #self.meta_model.test(lr_outer=1e-5)
 
-        #self.model.train()
+        self.model.train()
         #self.linear_model.train()
-        #self.train_func()
+        self.train_func()
 
         print('We are now doing the final test')
         self.model.eval()
