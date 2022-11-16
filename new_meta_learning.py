@@ -451,7 +451,7 @@ class MAML(object):
             if (i+1)%100 == 0:
                 self.save_model_parameters(i)
 
-            self.save_model_parameters(i)
+        self.save_model_parameters(i)
 
     def test(self, test_tasks, num_iterations=[1, 5, 10], num_repeats=20):
         print('\nBeginning testing for meta-learned model with k = %d\n' % self.k)
