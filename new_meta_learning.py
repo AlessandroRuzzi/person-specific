@@ -376,9 +376,10 @@ class MAML(object):
     def model_parameters_path(self):
         return '%s/meta_learned_parameters.pth.tar' % self.output_dir
 
-    def save_model_parameters(self):
+    def save_model_parameters(self,i):
         if self.output_dir is not None:
-            torch.save(self.model.state_dict(), self.model_parameters_path)
+            path = os.path.join(self.output_dir, "meta_learned_parameters_" + str(i) + ".pth.tar")
+            torch.save(self.model.state_dict(), path)
 
     def load_model_parameters(self):
         if os.path.isfile(self.model_parameters_path):
@@ -446,9 +447,10 @@ class MAML(object):
 
 
         # Save MAML initial parameters
-        self.save_model_parameters()
+        if i+1%100 == 0:
+            self.save_model_parameters(i)
 
-    def test(self, test_tasks_list, num_iterations=[1, 5, 10], num_repeats=20):
+    def test(self, test_tasks, num_iterations=[1, 5, 10], num_repeats=20):
         print('\nBeginning testing for meta-learned model with k = %d\n' % self.k)
         model = self.model.clone()
 
@@ -459,77 +461,19 @@ class MAML(object):
         # yield the same calibration samples.
         random.seed(4089213955)
 
-        for test_set_name, test_tasks in test_tasks_list.items():
-            predictions = OrderedDict()
-            losses = OrderedDict([(n, []) for n in num_iterations])
-            for i, task_name in enumerate(test_tasks.selected_tasks):
-                predictions[task_name] = []
-                for t in range(num_repeats):
-                    model.copy(self.model)
-                    optim = torch.optim.SGD(model.params(), lr=self.lr_inner)
+        model.copy(self.model)
+        optim = torch.optim.SGD(model.params(), lr=self.lr_inner)
 
-                    train_data, test_data = test_tasks.sample_for_task(i, num_train=self.k)
-                    if num_iterations[0] == 0:
-                        train_loss = forward(model, train_data)
-                        test_loss = forward(model, test_data, train_data=train_data)
-                        losses[0].append((train_loss, test_loss))
-                    for j in range(np.amax(num_iterations)):
-                        train_loss = forward_and_backward(model, train_data, optim)
-                        if (j + 1) in num_iterations:
-                            test_loss = forward(model, test_data, train_data=train_data)
-                            losses[j + 1].append((train_loss, test_loss))
+        train_data, test_data = test_tasks.sample_for_task(i, num_train=self.k)
+        if num_iterations[0] == 0:
+            train_loss = forward(model, train_data)
+            test_loss = forward(model, test_data, train_data=train_data)
+            
+        for j in range(np.amax(num_iterations)):
+            train_loss = forward_and_backward(model, train_data, optim)
+            
 
-                    # Register ground truth and prediction
-                    predictions[task_name].append({
-                        'groundtruth': test_data[1].cpu().numpy(),
-                        'predictions': forward(model, test_data,
-                                               return_predictions=True,
-                                               train_data=train_data),
-                    })
-                    predictions[task_name][-1]['errors'] = angular_error(
-                        predictions[task_name][-1]['groundtruth'],
-                        predictions[task_name][-1]['predictions'],
-                    )
 
-                print('Done for k = %3d, %s/%s... train: %.3f, test: %.3f' % (
-                    self.k, test_set_name, task_name,
-                    np.mean([both[0] for both in losses[num_iterations[-1]][-num_repeats:]]),
-                    np.mean([both[1] for both in losses[num_iterations[-1]][-num_repeats:]]),
-                ))
-
-            if self.output_dir is not None:
-                # Save predictions to file
-                pkl_path = '%s/predictions_%s.pkl' % (self.output_dir, test_set_name)
-                with open(pkl_path, 'wb') as f:
-                    pickle.dump(predictions, f)
-
-                # Finally, log values to tensorboard
-                if self.tensorboard is not None:
-                    for n, v in losses.items():
-                        train_losses, test_losses = zip(*v)
-                        stem = 'meta-test/%s/' % test_set_name
-                        self.tensorboard.add_scalar(stem + 'train-loss', np.mean(train_losses), n)
-                        self.tensorboard.add_scalar(stem + 'valid-loss', np.mean(test_losses), n)
-
-                # Write loss values as plain text too
-                np.savetxt('%s/losses_%s_train.txt' % (self.output_dir, test_set_name),
-                           [[n, np.mean(list(zip(*v))[0])] for n, v in losses.items()])
-                np.savetxt('%s/losses_%s_valid.txt' % (self.output_dir, test_set_name),
-                           [[n, np.mean(list(zip(*v))[1])] for n, v in losses.items()])
-
-            out_msg = '> Completed test on %s for k = %d' % (test_set_name, self.k)
-            final_n = sorted(num_iterations)[-1]
-            final_train_losses, final_test_losses = zip(*(losses[final_n]))
-            out_msg += ('\n  at %d steps losses were... train: %.3f, test: %.3f +/- %.3f' %
-                        (final_n, np.mean(final_train_losses),
-                         np.mean(final_test_losses),
-                         np.mean([
-                             np.std([
-                                 data['errors'] for data in person_data
-                             ], axis=0)
-                             for person_data in predictions.values()
-                         ])))
-            print(out_msg)
 
     def inner_loop(self, train_data, lr_inner=0.01):
         # Forward-pass and calculate gradients on meta model
