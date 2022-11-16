@@ -23,7 +23,7 @@ from linear_model import gaze_net as linear_gaze_net
 from new_meta_learning import MAML
 from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
-from new_meta_learning import Tasks, GazeEstimationModelPreExtended
+from new_meta_learning import Tasks, GazeEstimationModelPreExtended, GazeEstimationModel
 
 
 from util.error_calculation import mean_angular_error, classFeature2value, angular_error
@@ -294,7 +294,13 @@ class Trainer(object):
 
         #self.model.train()
         self.train_task = Tasks()
-        self.gaze_estimator = GazeEstimationModelPreExtended()
+        sample_train, _ = self.train_task.sample(num_train=1, num_test=0)
+        #self.gaze_estimator = GazeEstimationModelPreExtended()
+        layer_num_features = [int(f) for f in "64".split(',')]
+        layer_num_features = [sample_train[0].shape[1]] + layer_num_features + [3]
+    
+        self.gaze_estimator = GazeEstimationModel(activation_type='selu',
+                                    layer_num_features=layer_num_features)
         self.meta_model = MAML(model = self.gaze_estimator, k = 3, train_tasks=self.train_task, valid_tasks=self.train_task )       
         self.meta_model.train(steps_outer=100000,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
         #self.meta_model.test(lr_outer=1e-5)
