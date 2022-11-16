@@ -367,7 +367,8 @@ class GazeDataset(Dataset):
                         (num_i, i) for i in range(n)
                     ]  
                 else:
-                    n = self.hdfs[num_i]["face_patch"].shape[0]
+                    n = 4000
+                    #n = self.hdfs[num_i]["face_patch"].shape[0]
                     self.idx_to_kv += [
                         (num_i, i) for i in range(n)
                     ]  
