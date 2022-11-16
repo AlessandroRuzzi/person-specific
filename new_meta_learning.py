@@ -425,6 +425,9 @@ class MAML(object):
                     self.tensorboard.add_scalar('meta-train/train-loss', task_loss, i)
                     self.tensorboard.add_scalar('meta-train/valid-loss', new_task_loss, i)
 
+                print("train loss small: ",task_loss)
+                print("train loss big: ", new_task_loss)
+
                 # Validation
                 losses = []
                 for j in range(self.valid_tasks.num_tasks):
@@ -437,6 +440,10 @@ class MAML(object):
                 if self.tensorboard is not None:
                     self.tensorboard.add_scalar('meta-valid/train-loss', np.mean(train_losses), i)
                     self.tensorboard.add_scalar('meta-valid/valid-loss', np.mean(valid_losses), i)
+                
+                print("valid loss train:", train_losses)
+                print("valid loss val: ", valid_losses)
+
 
         # Save MAML initial parameters
         self.save_model_parameters()
