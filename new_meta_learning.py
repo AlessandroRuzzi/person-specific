@@ -379,6 +379,7 @@ class MAML(object):
     def save_model_parameters(self,i):
         if self.output_dir is not None:
             path = os.path.join(self.output_dir, "meta_learned_parameters_" + str(i) + ".pth.tar")
+            #print(path)
             torch.save(self.model.state_dict(), path)
 
     def load_model_parameters(self):
@@ -446,8 +447,10 @@ class MAML(object):
                 print("valid loss val: ", valid_losses)
 
 
-        # Save MAML initial parameters
-        if i+1%100 == 0:
+            # Save MAML initial parameters
+            if i+1%100 == 0:
+                self.save_model_parameters(i)
+
             self.save_model_parameters(i)
 
     def test(self, test_tasks, num_iterations=[1, 5, 10], num_repeats=20):
