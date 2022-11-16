@@ -1,6 +1,25 @@
 {
 "train": [
     "subject0000.h5", 
-    "subject0003.h5"
+    "subject0003.h5",
+    "subject0004.h5",
+    "subject0005.h5",
+    "subject0024.h5",
+    "subject0026.h5",
+    "subject0027.h5",
+    "subject0028.h5",
+    "subject0044.h5",
+    "subject0045.h5",
+    "subject0046.h5",
+    "subject0048.h5",
+    "subject0065.h5",
+    "subject0066.h5",
+    "subject0067.h5",
+    "subject0090.h5",
+    "subject0092.h5",
+    "subject0095.h5",
+    "subject0098.h5",
+    "subject0099.h5",
+    "subject0100.h5"
     ],
 "test_specific": ["subject0012.h5", "subject0022.h5", "subject0025.h5", "subject0047.h5", "subject0054.h5", "subject0074.h5", "subject0086.h5", "subject0094.h5", "subject0096.h5", "subject0097.h5", "subject0110.h5", "subject0116.h5", "subject0115.h5", "subject0113.h5", "subject0119.h5"]}
