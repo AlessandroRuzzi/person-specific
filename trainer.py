@@ -20,9 +20,10 @@ from utils import AverageMeter
 from new_model import gaze_net
 from linear_model import gaze_net as linear_gaze_net 
 #from vgg_model import gaze_network as gaze_net
-from meta_learning import MAML
+from new_meta_learning import MAML
 from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
+from new_meta_learning import Tasks, GazeEstimationModelPreExtended
 
 
 from util.error_calculation import mean_angular_error, classFeature2value, angular_error
@@ -254,10 +255,10 @@ class Trainer(object):
         a separate ckpt is created for use on the test set.
         """
         # load the most recent checkpoint
-        if self.resume:
-            self.load_checkpoint(best=True, is_strict=False,
+        #if self.resume:
+        #    self.load_checkpoint(best=True, is_strict=False,
                                  #input_file_name='ckpt/epoch_24_resnet_correct_ckpt.pth.tar')
-                                 input_file_name='ckpt/epoch_24_VGG_80_subj_ckpt.pth.tar')
+                                 #input_file_name='ckpt/epoch_24_VGG_80_subj_ckpt.pth.tar')
                                  #input_file_name='ckpt/epoch_24_VGG_correct_small_ckpt.pth.tar')
                                  #input_file_name='ckpt/ram_epoch_24_ckpt.pth.tar')
             # self.model.locator.gaze_network.load_state_dict(self.model.sensor.gaze_network.state_dict())
@@ -292,16 +293,18 @@ class Trainer(object):
         """
 
         #self.model.train()
-        #self.meta_model = MAML(model = self.model, k = 2, train_tasks=self.train_loader, valid_tasks= self.train_loader)       
-        #self.meta_model.train(steps_outer=70,steps_inner=5, lr_inner=1e-5, lr_outer=1e-5)
+        self.train_task = Tasks()
+        self.gaze_estimator = GazeEstimationModelPreExtended()
+        self.meta_model = MAML(model = self.gaze_estimator, k = 3, train_tasks=self.train_task, valid_tasks=self.train_task )       
+        self.meta_model.train(steps_outer=100000,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
         #self.meta_model.test(lr_outer=1e-5)
 
-        self.model.train()
+        #self.model.train()
         #self.linear_model.train()
-        self.train_func()
+        #self.train_func()
 
         print('We are now doing the final test')
-        self.model.eval()
+        #self.model.eval()
         #self.linear_model.eval()
         self.test(is_final=True)
         self.best_valid_acc = 0
