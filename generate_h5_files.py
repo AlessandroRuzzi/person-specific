@@ -53,7 +53,7 @@ for subjects in train_keys:
     output_code = []
     output_gaze = []
 
-    for i, image,gaze_direction in enumerate(train_data_loader):
+    for i, (image,gaze_direction) in enumerate(train_data_loader):
         print(i)
 
         model.eval()
