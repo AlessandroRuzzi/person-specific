@@ -387,6 +387,18 @@ class GazeDataset(Dataset):
         self.hdf = None
         self.transform = transform
 
+        self.cam_matrix = []
+        self.cam_distortion = []
+        
+        for cam_id in range(18):
+            cam_file_name = "cam/cam" + str(cam_id).zfill(2) + ".xml"
+            fs = cv2.FileStorage(cam_file_name, cv2.FILE_STORAGE_READ)
+            self.cam_matrix.append(fs.getNode("Camera_Matrix").mat())
+            self.cam_distortion.append(fs.getNode("Distortion_Coefficients").mat())
+            fs.release()
+
+        self.face_model_load = np.loadtxt("face_model.txt")
+
     def __len__(self):
         """
         Function that returns the length of the dataset.
