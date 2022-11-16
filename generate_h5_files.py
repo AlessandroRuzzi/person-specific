@@ -75,7 +75,7 @@ for subjects in train_keys:
                     chunks=(1, 2))
 
         with torch.set_grad_enabled(False):
-            code = model(image.to(device))
+            code = model(image.to(device)).detach().cpu().numpy()
 
         output_code[i] = code[0,:]
         output_gaze[i] = gaze_direction
