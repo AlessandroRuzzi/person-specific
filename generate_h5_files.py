@@ -40,7 +40,7 @@ print(
 model.eval()
 
 for subjects in train_keys:
-
+    print(subjects)
     train_data_loader = get_train_loader(
             "/data/aruzzi/xgaze_subjects", 1, 0, evaluate="landmark", is_shuffle=False, subject= subjects
         )
@@ -54,7 +54,8 @@ for subjects in train_keys:
     output_gaze = []
 
     for i, (image,gaze_direction) in enumerate(train_data_loader):
-        print(i)
+        if i % 500 ==0:
+            print(i)
 
         model.eval()
 
