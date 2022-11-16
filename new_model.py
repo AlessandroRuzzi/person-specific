@@ -36,6 +36,7 @@ class gaze_net(nn.Module):
     def forward(self, x):
         feature = self.gaze_network(x)
         feature = feature.view(feature.size(0), -1)
+        return feature
         feature = self.gaze_fc(feature)
         gaze = feature[:,:2]
         head = feature [:,2:]

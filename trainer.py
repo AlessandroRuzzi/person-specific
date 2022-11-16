@@ -17,9 +17,9 @@ import json
 
 from tqdm import tqdm
 from utils import AverageMeter
-#from new_model import gaze_net
+from new_model import gaze_net
 from linear_model import gaze_net as linear_gaze_net 
-from vgg_model import gaze_network as gaze_net
+#from vgg_model import gaze_network as gaze_net
 from meta_learning import MAML
 from sklearn.linear_model import Ridge, LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
