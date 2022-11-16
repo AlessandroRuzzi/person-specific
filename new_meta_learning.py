@@ -448,7 +448,7 @@ class MAML(object):
 
 
             # Save MAML initial parameters
-            if i+1%100 == 0:
+            if (i+1)%100 == 0:
                 self.save_model_parameters(i)
 
             self.save_model_parameters(i)
