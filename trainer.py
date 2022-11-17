@@ -415,7 +415,7 @@ class Trainer(object):
             print('Loaded %s' % check_path)
             self.meta_model = MAML(model = self.gaze_estimator, k = 3, train_tasks=self.test_task, valid_tasks=self.test_task ) 
             self.meta_model.lr_inner = 1e-5
-            self.meta_model.test(self.train_loader, self.model)
+            #self.meta_model.test(self.train_loader, self.model)
         error_all = []
 
         prediction_all = []
@@ -448,9 +448,7 @@ class Trainer(object):
             error_each = angular_error(pred_gaze_np, target_gaze_np)
             error = np.mean(error_each)
             error_all.append(error)
-            print(is_final)
             if not is_final:
-                print("here")
                 if i == show_interval:
                     mean_error = sum(error_all) / float(len(error_all))
                     print('Now go for test. I want this line to be Test error {0:.3f}\t'.format(mean_error))
