@@ -385,10 +385,10 @@ class Trainer(object):
             try:
                 
                 state_dict = {
-                    'layer01.weights': weights['module.gaze1.weight'],
-                    'layer01.bias': weights['module.gaze1.bias'],
-                    'layer02.weights': weights['module.gaze2.weight'],
-                    'layer02.bias': weights['module.gaze2.bias'],
+                    'layer01.weights': weights['layer01.weights'],
+                    'layer01.bias': weights['layer01.bias'],
+                    'layer02.weights': weights['layer02.weights'],
+                    'layer02.bias': weights['layer02.bias'],
                 }
             except:  # noqa
                 
