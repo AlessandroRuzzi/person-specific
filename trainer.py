@@ -377,7 +377,9 @@ class Trainer(object):
                                         layer_num_features=layer_num_features)
             check_path = "outputs/MAML03/meta_learned_parameters_90000.pth.tar"
             weights = torch.load(check_path)
+            print("here")
             try:
+                print("here1")
                 state_dict = {
                     'layer01.weights': weights['module.gaze1.weight'],
                     'layer01.bias': weights['module.gaze1.bias'],
@@ -385,14 +387,17 @@ class Trainer(object):
                     'layer02.bias': weights['module.gaze2.bias'],
                 }
             except:  # noqa
+                print("here2")
                 state_dict = {
                     'layer01.weights': weights['gaze1.weight'],
                     'layer01.bias': weights['gaze1.bias'],
                     'layer02.weights': weights['gaze2.weight'],
                     'layer02.bias': weights['gaze2.bias'],
                 }
+            print("here3")
             for key, values in state_dict.items():
                 self.gaze_estimator.set_param(key, values, copy=True)
+            print("here4")
             del state_dict
             print('Loaded %s' % check_path)
             self.meta_model = MAML(model = self.gaze_estimator, k = 3, train_tasks=self.train_task, valid_tasks=self.train_task ) 

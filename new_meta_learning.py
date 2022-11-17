@@ -499,6 +499,7 @@ class MAML(object):
         #train_data, test_data = test_tasks.sample_for_task(0, num_train=self.k)
             
         for j in range(np.amax(num_iterations)):
+            print(j)
             for i, (input_img, target) in enumerate(train_loader):
                     input_var = torch.autograd.Variable(input_img.float().cuda())
                     target_var = torch.autograd.Variable(target.float().cuda())
@@ -507,6 +508,7 @@ class MAML(object):
             with torch.set_grad_enabled(False):
                 latent_code = code_estim(train_input)
             train_loss = forward_and_backward_test(model, (latent_code,train_target), optim)
+            print(train_loss)
             
 
 
