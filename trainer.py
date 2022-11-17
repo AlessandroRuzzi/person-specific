@@ -383,11 +383,11 @@ class Trainer(object):
             
             #self.gaze_estimator = GazeEstimationModelPreExtended()
             layer_num_features = [int(f) for f in "64".split(',')]
-            layer_num_features = [sample_test[0].shape[1]] + layer_num_features + [3]
+            layer_num_features = [sample_test[0].shape[1]] + layer_num_features + [2]
             
             self.gaze_estimator = GazeEstimationModel(activation_type='selu',
                                         layer_num_features=layer_num_features)
-            check_path = "outputs/meta_learned_parameters_90000.pth.tar"
+            check_path = "outputs/MAML_03/meta_learned_parameters_20000.pth.tar"
             
             weights = torch.load(check_path)
             
@@ -414,8 +414,8 @@ class Trainer(object):
             del state_dict
             print('Loaded %s' % check_path)
             self.meta_model = MAML(model = self.gaze_estimator, k = 3, train_tasks=self.test_task, valid_tasks=self.test_task ) 
-            self.meta_model.lr_inner = 1e-3
-            self.meta_model.test(self.train_loader, self.model)
+            self.meta_model.lr_inner = 1e-5
+            #self.meta_model.test(self.train_loader, self.model)
         error_all = []
 
         prediction_all = []
@@ -440,7 +440,7 @@ class Trainer(object):
             #pred_gaze, pred_head = self.meta_model.model(input_var)
             pred_gaze_np = pred_gaze.cpu().data.numpy()
            
-            pred_gaze_np = np.array([vector_to_pitchyaw(x) for x in pred_gaze_np]) 
+            #pred_gaze_np = np.array([vector_to_pitchyaw(x) for x in pred_gaze_np]) 
             #pred_gaze_np = pred_gaze
             prediction_all.append(pred_gaze_np)
             target_gaze_np = target_var.cpu().data.numpy()
