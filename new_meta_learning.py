@@ -504,7 +504,7 @@ class MAML(object):
                     target_var = torch.autograd.Variable(target.float().cuda())
                     break
             train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
-            train_target = pitchyaw_to_vector(np.array(train_target).reshape(-1, 2))
+            train_target = pitchyaw_to_vector(np.array(train_target.detach().cpu()).reshape(-1, 2))
             with torch.set_grad_enabled(False):
                 latent_code = code_estim(train_input)
             train_loss = forward_and_backward_test(model, (latent_code,train_target), optim)
