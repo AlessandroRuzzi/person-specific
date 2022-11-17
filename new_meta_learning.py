@@ -93,6 +93,7 @@ class Tasks(object):
         self.processed_data = []
         num_entries_tot = 0
         for task in self.selected_tasks:
+            print("here")
             self.data = h5py.File(os.path.join(path,task), 'r')
             num_entries = self.data["gaze"].len()
             num_entries_tot += num_entries
