@@ -483,7 +483,7 @@ class MAML(object):
 
     def test(self, train_loader, code_estim, num_iterations=[1, 5, 10], num_repeats=20):
         print('\nBeginning testing for meta-learned model with k = %d\n' % self.k)
-        model = self.model.clone()
+        #model = self.model.clone()
 
         # IMPORTANT
         #
@@ -492,8 +492,8 @@ class MAML(object):
         # yield the same calibration samples.
         random.seed(4089213955)
 
-        model.copy(self.model)
-        optim = torch.optim.SGD(model.params(), lr=self.lr_inner)
+        #model.copy(self.model)
+        optim = torch.optim.SGD(self.inner_loopmodel.params(), lr=self.lr_inner)
 
         #train_data, test_data = test_tasks.sample_for_task(0, num_train=self.k)
             
@@ -507,7 +507,7 @@ class MAML(object):
             train_target = torch.Tensor(pitchyaw_to_vector(np.array(train_target.detach().cpu()).reshape(-1, 2))).to(device)
             with torch.set_grad_enabled(False):
                 latent_code = code_estim(train_input)
-            train_loss = forward_and_backward_test(model, (latent_code,train_target), optim)
+            train_loss = forward_and_backward_test(self.model, (latent_code,train_target), optim)
             print(train_loss)
             
 
