@@ -88,8 +88,8 @@ class Tasks(object):
         path = "/data/aruzzi/xgaze_meta"    
         
         self.selected_tasks = train_keys
-        #self.num_tasks = len(self.selected_tasks)
-        self.num_tasks = 1
+        self.num_tasks = len(self.selected_tasks)
+        #self.num_tasks = 1
         # Now load in all data into memory for selected tasks
         self.processed_data = []
         num_entries_tot = 0
@@ -103,7 +103,7 @@ class Tasks(object):
             ], axis=1)
             ys = np.array(self.data["gaze"]).reshape(-1, 2)
             self.processed_data.append((xs, ys))
-            break
+            #break
         print('Loaded %s (%d -> %d tasks)' % (os.path.basename(path),
                                               self.num_tasks,num_entries_tot))
 

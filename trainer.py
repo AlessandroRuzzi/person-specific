@@ -307,12 +307,12 @@ class Trainer(object):
         sample_train, _ = self.train_task.sample(num_train=1, num_test=0)
         #self.gaze_estimator = GazeEstimationModelPreExtended()
         layer_num_features = [int(f) for f in "64".split(',')]
-        layer_num_features = [sample_train[0].shape[1]] + layer_num_features + [3]
+        layer_num_features = [sample_train[0].shape[1]] + layer_num_features + [2]
     
         self.gaze_estimator = GazeEstimationModel(activation_type='selu',
                                     layer_num_features=layer_num_features)
         self.meta_model = MAML(model = self.gaze_estimator, k = 3, train_tasks=self.train_task, valid_tasks=self.train_task )       
-        self.meta_model.train(steps_outer=100000,steps_inner=5, lr_inner=1e-5, lr_outer=1e-3)
+        self.meta_model.train(steps_outer=100000,steps_inner=5, lr_inner=1e-4, lr_outer=1e-3)
         #self.meta_model.test(lr_outer=1e-5)
 
         #self.model.train()
