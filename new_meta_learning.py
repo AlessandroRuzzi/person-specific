@@ -101,7 +101,7 @@ class Tasks(object):
             xs = np.concatenate([
                 np.array(self.data["code"]).reshape(num_entries, -1)
             ], axis=1)
-            ys = np.array(self.data["gaze"].reshape(-1, 2))
+            ys = np.array(self.data["gaze"]).reshape(-1, 2)
             self.processed_data.append((xs, ys))
             #break
         print('Loaded %s (%d -> %d tasks)' % (os.path.basename(path),
