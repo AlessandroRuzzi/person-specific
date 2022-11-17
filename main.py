@@ -56,7 +56,7 @@ def main(config, subject_id=0):
 
     # or load a pretrained model and test
     else:
-        trainer.test()
+        trainer.test(is_final=True)
 
 
 if __name__ == '__main__':
