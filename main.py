@@ -8,6 +8,8 @@ from new_data_loader import get_train_test_loader
 import numpy as np
 import wandb
 import configparser
+import random
+import os
 
 def main(config, subject_id=0):
     # ensure directories are setup
@@ -61,5 +63,18 @@ def main(config, subject_id=0):
 
 if __name__ == '__main__':
     config, unparsed = get_config()
+    torch.autograd.set_detect_anomaly(True)
+    torch.manual_seed(45)  # cpu
+    torch.cuda.manual_seed(55)  # gpu
+    np.random.seed(65)  # numpy
+    random.seed(75)  # random and transforms
+    torch.backends.cudnn.deterministic = True  # cudnn
+    torch.backends.cudnn.benchmark = True
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.backends.cudnn.allow_tf32 = False
+
+    os.environ["OMP_NUM_THREADS"] = "1"
+    os.environ["MKL_NUM_THREADS"] = "1"
+    torch.set_num_threads(1)
     for num_s in range(0, 15):
         main(config, subject_id=num_s)
