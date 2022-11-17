@@ -298,7 +298,7 @@ class Trainer(object):
         sample_train, _ = self.train_task.sample(num_train=1, num_test=0)
         #self.gaze_estimator = GazeEstimationModelPreExtended()
         layer_num_features = [int(f) for f in "64".split(',')]
-        layer_num_features = [sample_train[0].shape[1]] + layer_num_features + [3]
+        layer_num_features = [sample_train[0].shape[1]] + layer_num_features + [2]
     
         self.gaze_estimator = GazeEstimationModel(activation_type='selu',
                                     layer_num_features=layer_num_features)
@@ -374,7 +374,7 @@ class Trainer(object):
             
             #self.gaze_estimator = GazeEstimationModelPreExtended()
             layer_num_features = [int(f) for f in "64".split(',')]
-            layer_num_features = [sample_test[0].shape[1]] + layer_num_features + [3]
+            layer_num_features = [sample_test[0].shape[1]] + layer_num_features + [2]
             
             self.gaze_estimator = GazeEstimationModel(activation_type='selu',
                                         layer_num_features=layer_num_features)
