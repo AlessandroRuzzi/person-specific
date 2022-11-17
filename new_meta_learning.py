@@ -88,8 +88,8 @@ class Tasks(object):
         path = "/data/aruzzi/xgaze_meta"    
         
         self.selected_tasks = train_keys
-        self.num_tasks = len(self.selected_tasks)
-        #self.num_tasks = 1
+        #self.num_tasks = len(self.selected_tasks)
+        self.num_tasks = 1
         # Now load in all data into memory for selected tasks
         self.processed_data = []
         num_entries_tot = 0
@@ -101,9 +101,9 @@ class Tasks(object):
             xs = np.concatenate([
                 np.array(self.data["code"]).reshape(num_entries, -1)
             ], axis=1)
-            ys = np.array(self.data["gaze"]).reshape(-1, 2)
+            ys = pitchyaw_to_vector(np.array(self.data["gaze"]).reshape(-1, 2))
             self.processed_data.append((xs, ys))
-            #break
+            break
         print('Loaded %s (%d -> %d tasks)' % (os.path.basename(path),
                                               self.num_tasks,num_entries_tot))
 
@@ -504,6 +504,7 @@ class MAML(object):
                     target_var = torch.autograd.Variable(target.float().cuda())
                     break
             train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
+            train_target = pitchyaw_to_vector(np.array(train_target).reshape(-1, 2))
             with torch.set_grad_enabled(False):
                 latent_code = code_estim(train_input)
             train_loss = forward_and_backward_test(model, (latent_code,train_target), optim)

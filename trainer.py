@@ -34,6 +34,15 @@ range_angle = range_angle_set / 180.0 * math.pi  # the angle we set to be maxium
 
 # ratio loss, softmax, no index_better_var
 
+def vector_to_pitchyaw(vector):
+    vector = vector / np.linalg.norm(vector)
+    out = np.zeros((1, 2))
+    out[0, 0] = np.arcsin(vector[0, 1])  # theta
+    out[0, 1] = np.arctan2(
+        -1 * vector[0, 0], -1 * vector[0, 2]
+    )  # phi   Here, I use minus to reverse x and z axis
+    return out
+
 def draw_gaze(image_in, pos, pitchyaw, length=40.0, thickness=1, color=(0, 0, 255)):
     """Draw gaze angle on given image with a given eye positions."""
     image_out = image_in
@@ -298,7 +307,7 @@ class Trainer(object):
         sample_train, _ = self.train_task.sample(num_train=1, num_test=0)
         #self.gaze_estimator = GazeEstimationModelPreExtended()
         layer_num_features = [int(f) for f in "64".split(',')]
-        layer_num_features = [sample_train[0].shape[1]] + layer_num_features + [2]
+        layer_num_features = [sample_train[0].shape[1]] + layer_num_features + [3]
     
         self.gaze_estimator = GazeEstimationModel(activation_type='selu',
                                     layer_num_features=layer_num_features)
@@ -374,11 +383,11 @@ class Trainer(object):
             
             #self.gaze_estimator = GazeEstimationModelPreExtended()
             layer_num_features = [int(f) for f in "64".split(',')]
-            layer_num_features = [sample_test[0].shape[1]] + layer_num_features + [2]
+            layer_num_features = [sample_test[0].shape[1]] + layer_num_features + [3]
             
             self.gaze_estimator = GazeEstimationModel(activation_type='selu',
                                         layer_num_features=layer_num_features)
-            check_path = "outputs/MAML_03/meta_learned_parameters_90000.pth.tar"
+            check_path = "outputs/meta_learned_parameters_90000.pth.tar"
             
             weights = torch.load(check_path)
             
@@ -430,6 +439,7 @@ class Trainer(object):
             #pred_gaze = self.linear_model(pred_gaze)
             #pred_gaze, pred_head = self.meta_model.model(input_var)
             pred_gaze_np = pred_gaze.cpu().data.numpy()
+            pred_gaze_np = np.array([vector_to_pitchyaw(x) for x in pred_gaze_np]) 
             #pred_gaze_np = pred_gaze
             prediction_all.append(pred_gaze_np)
             target_gaze_np = target_var.cpu().data.numpy()
