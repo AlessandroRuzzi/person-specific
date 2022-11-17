@@ -309,11 +309,11 @@ class Trainer(object):
         #self.linear_model.train()
         #self.train_func()
 
-        print('We are now doing the final test')
+        #print('We are now doing the final test')
         #self.model.eval()
         #self.linear_model.eval()
-        self.test(is_final=True)
-        self.best_valid_acc = 0
+        #self.test(is_final=True)
+        #self.best_valid_acc = 0
 
 
     def train_one_epoch(self, epoch, data_loader, is_train=True):
@@ -360,6 +360,43 @@ class Trainer(object):
         return accs.avg, losses_gaze.avg
 
     def test(self, is_final=False):
+        if self.resume:
+            self.load_checkpoint(best=True, is_strict=False,
+                                 input_file_name='ckpt/epoch_24_resnet_correct_ckpt.pth.tar')
+                                 #input_file_name='ckpt/epoch_24_VGG_80_subj_ckpt.pth.tar')
+                                 #input_file_name='ckpt/epoch_24_VGG_correct_small_ckpt.pth.tar')
+                                 #input_file_name='ckpt/ram_epoch_24_ckpt.pth.tar')
+            self.test_task = Tasks(subject=self.subject_id)
+            sample_test, _ = self.test_task.sample(num_train=1, num_test=0)
+            #self.gaze_estimator = GazeEstimationModelPreExtended()
+            layer_num_features = [int(f) for f in "64".split(',')]
+            layer_num_features = [sample_test[0].shape[1]] + layer_num_features + [3]
+        
+            self.gaze_estimator = GazeEstimationModel(activation_type='selu',
+                                        layer_num_features=layer_num_features)
+            check_path = "outputs/MAML03/meta_learned_parameters_90000.pth.tar"
+            weights = torch.load(check_path)
+            try:
+                state_dict = {
+                    'layer01.weights': weights['module.gaze1.weight'],
+                    'layer01.bias': weights['module.gaze1.bias'],
+                    'layer02.weights': weights['module.gaze2.weight'],
+                    'layer02.bias': weights['module.gaze2.bias'],
+                }
+            except:  # noqa
+                state_dict = {
+                    'layer01.weights': weights['gaze1.weight'],
+                    'layer01.bias': weights['gaze1.bias'],
+                    'layer02.weights': weights['gaze2.weight'],
+                    'layer02.bias': weights['gaze2.bias'],
+                }
+            for key, values in state_dict.items():
+                self.gaze_estimator.set_param(key, values, copy=True)
+            del state_dict
+            print('Loaded %s' % check_path)
+            self.meta_model = MAML(model = self.gaze_estimator, k = 3, train_tasks=self.train_task, valid_tasks=self.train_task ) 
+            self.meta_model.lr_inner = 1e-5
+            self.meta_model.test(self.test_task)
         error_all = []
 
         prediction_all = []
@@ -375,7 +412,9 @@ class Trainer(object):
 
             self.batch_size = input_var.shape[0]
 
-            pred_gaze, pred_head = self.model(input_var)
+            with torch.set_grad_enabled(False):
+                latent_code = self.model(input_var)
+                pred_gaze = self.meta_model.model(latent_code)
             #pred_gaze = self.reg_gt.predict(pred_gaze.cpu().data.numpy())
             #pred_gaze = self.reg_gt.predict(self.poly.transform(pred_gaze.cpu().data.numpy()))
             #pred_gaze = self.linear_model(pred_gaze)

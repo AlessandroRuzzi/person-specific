@@ -79,16 +79,18 @@ def pitchyaw_to_vector(pitchyaws):
 
 
 class Tasks(object):
-    def __init__(self):
+    def __init__(self,subject = None):
 
         # Select tasks for which min. 1000 entries exist
         with open("data/train_test_split.json", "r") as f:
             datastore = json.load(f)
-
-        train_keys = datastore["train"] 
+        if subject==None:
+            train_keys = datastore["train"] 
+            self.selected_tasks = train_keys
+        else:
+            val_keys = datastore["val"] 
+            self.selected_tasks = val_keys[subject]
         path = "/data/aruzzi/xgaze_meta"    
-        
-        self.selected_tasks = train_keys
         self.num_tasks = len(self.selected_tasks)
 
         # Now load in all data into memory for selected tasks
@@ -467,10 +469,7 @@ class MAML(object):
         model.copy(self.model)
         optim = torch.optim.SGD(model.params(), lr=self.lr_inner)
 
-        train_data, test_data = test_tasks.sample_for_task(i, num_train=self.k)
-        if num_iterations[0] == 0:
-            train_loss = forward(model, train_data)
-            test_loss = forward(model, test_data, train_data=train_data)
+        train_data, test_data = test_tasks.sample_for_task(0, num_train=self.k)
             
         for j in range(np.amax(num_iterations)):
             train_loss = forward_and_backward(model, train_data, optim)
