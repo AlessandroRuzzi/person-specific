@@ -123,7 +123,8 @@ class Trainer(object):
             self.test_loader = data_loader[1]
             self.num_test = len(self.test_loader.dataset)
         else:
-            self.test_loader = data_loader
+            self.train_loader = data_loader[0]
+            self.test_loader = data_loader[1]
             self.num_test = len(self.test_loader.dataset)
         self.num_classes = 2
         self.num_channels = 3
@@ -366,7 +367,7 @@ class Trainer(object):
                                  #input_file_name='ckpt/epoch_24_VGG_80_subj_ckpt.pth.tar')
                                  #input_file_name='ckpt/epoch_24_VGG_correct_small_ckpt.pth.tar')
                                  #input_file_name='ckpt/ram_epoch_24_ckpt.pth.tar')
-            self.test_task = Tasks(subject=self.subject_id)
+            self.test_task = Tasks()
             sample_test, _ = self.test_task.sample(num_train=1, num_test=0)
             #self.gaze_estimator = GazeEstimationModelPreExtended()
             layer_num_features = [int(f) for f in "64".split(',')]
@@ -396,7 +397,7 @@ class Trainer(object):
             print('Loaded %s' % check_path)
             self.meta_model = MAML(model = self.gaze_estimator, k = 3, train_tasks=self.train_task, valid_tasks=self.train_task ) 
             self.meta_model.lr_inner = 1e-5
-            self.meta_model.test(self.test_task)
+            self.meta_model.test(self.train_loader, self.model)
         error_all = []
 
         prediction_all = []

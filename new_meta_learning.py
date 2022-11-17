@@ -351,6 +351,33 @@ def forward(model, data, return_predictions=False, train_data=None,
     else:
         return loss.data.cpu().numpy()
 
+def forward_and_backward_test(model, data, optim=None, create_graph=False,
+                         train_data=None, loss_function=nn_mean_angular_loss):
+    model.train()
+    if optim is not None:
+        optim.zero_grad()
+    loss = forward_test(model, data, train_data=train_data, for_backward=True,
+                   loss_function=loss_function)
+    loss.backward(create_graph=create_graph, retain_graph=(optim is None))
+    if optim is not None:
+        # nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+        optim.step()
+    return loss.data.cpu().numpy()
+
+
+def forward_test(model, data, return_predictions=False, train_data=None,
+            for_backward=False, loss_function=nn_mean_angular_loss):
+    model.train()
+    x, y = data
+    y_hat = model(V(x))
+    loss = loss_function(y_hat, V(y))
+    if return_predictions:
+        return y_hat.data.cpu().numpy()
+    elif for_backward:
+        return loss
+    else:
+        return loss.data.cpu().numpy()
+
 
 """
     Inference through model (with/without gradient calculation)
@@ -455,7 +482,7 @@ class MAML(object):
 
         self.save_model_parameters(i+1)
 
-    def test(self, test_tasks, num_iterations=[1, 5, 10], num_repeats=20):
+    def test(self, train_loader, code_estim, num_iterations=[1, 5, 10], num_repeats=20):
         print('\nBeginning testing for meta-learned model with k = %d\n' % self.k)
         model = self.model.clone()
 
@@ -469,10 +496,17 @@ class MAML(object):
         model.copy(self.model)
         optim = torch.optim.SGD(model.params(), lr=self.lr_inner)
 
-        train_data, test_data = test_tasks.sample_for_task(0, num_train=self.k)
+        #train_data, test_data = test_tasks.sample_for_task(0, num_train=self.k)
             
         for j in range(np.amax(num_iterations)):
-            train_loss = forward_and_backward(model, train_data, optim)
+            for i, (input_img, target) in enumerate(train_loader):
+                    input_var = torch.autograd.Variable(input_img.float().cuda())
+                    target_var = torch.autograd.Variable(target.float().cuda())
+                    break
+            train_input,train_target, test_input, test_target = input_var[:self.k,:],target_var[:self.k,:] , input_var[self.k:,:],target_var[self.k:,:]
+            with torch.set_grad_enabled(False):
+                latent_code = code_estim(train_input)
+            train_loss = forward_and_backward_test(model, (latent_code,train_target), optim)
             
 
 
