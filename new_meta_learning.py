@@ -493,7 +493,7 @@ class MAML(object):
         random.seed(4089213955)
 
         #model.copy(self.model)
-        optim = torch.optim.SGD(self.inner_loopmodel.params(), lr=self.lr_inner)
+        optim = torch.optim.SGD(self.model.params(), lr=self.lr_inner)
 
         #train_data, test_data = test_tasks.sample_for_task(0, num_train=self.k)
             
