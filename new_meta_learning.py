@@ -79,17 +79,15 @@ def pitchyaw_to_vector(pitchyaws):
 
 
 class Tasks(object):
-    def __init__(self,subject = None):
+    def __init__(self):
 
         # Select tasks for which min. 1000 entries exist
         with open("data/train_test_split.json", "r") as f:
             datastore = json.load(f)
-        if subject is None:
-            train_keys = datastore["train"] 
-            self.selected_tasks = train_keys
-        else:
-            val_keys = datastore["val"] 
-            self.selected_tasks = val_keys[subject]
+      
+        train_keys = datastore["train"] 
+        self.selected_tasks = train_keys
+        
         path = "/data/aruzzi/xgaze_meta"    
         self.num_tasks = len(self.selected_tasks)
 
