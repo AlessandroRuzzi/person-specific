@@ -481,7 +481,7 @@ class MAML(object):
 
         self.save_model_parameters(i+1)
 
-    def test(self, train_loader, code_estim, num_iterations=[1, 5, 10], num_repeats=20):
+    def test(self, train_loader, code_estim, num_iterations=[1, 5, 100], num_repeats=20):
         print('\nBeginning testing for meta-learned model with k = %d\n' % self.k)
         #model = self.model.clone()
 
