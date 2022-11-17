@@ -32,14 +32,14 @@ def main(config, subject_id=0):
         kwargs = {'num_workers': config.num_workers, 'is_shuffle': config.shuffle, 'fold': config.fold}
 
     # instantiate data loaders
-    if config.is_train:
-        data_loader = get_train_test_loader(
-            data_dir=data_dir,
-            batch_size=config.batch_size,
-            num_workers=4,
-            is_shuffle=False,
-            subject_id=subject_id
-        )
+    
+    data_loader = get_train_test_loader(
+        data_dir=data_dir,
+        batch_size=config.batch_size,
+        num_workers=4,
+        is_shuffle=False,
+        subject_id=subject_id
+    )
     # else:
     #     data_loader = get_test_loader(
     #         data_dir, config.batch_size, config.shuffle,
