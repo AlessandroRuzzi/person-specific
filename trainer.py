@@ -369,7 +369,7 @@ class Trainer(object):
         print('running time is ', batch_time.avg, 'gaze loss is: ', losses_gaze.avg)
         return accs.avg, losses_gaze.avg
 
-    def test(self, is_final=False):
+    def test(self, is_final=True):
         if self.resume:
             self.load_checkpoint(best=True, is_strict=False,
                                  input_file_name='ckpt/epoch_24_resnet_correct_ckpt.pth.tar')
