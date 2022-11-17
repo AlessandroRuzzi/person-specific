@@ -404,7 +404,7 @@ class Trainer(object):
             
             del state_dict
             print('Loaded %s' % check_path)
-            self.meta_model = MAML(model = self.gaze_estimator, k = 3, train_tasks=self.train_task, valid_tasks=self.train_task ) 
+            self.meta_model = MAML(model = self.gaze_estimator, k = 3, train_tasks=self.test_task, valid_tasks=self.test_task ) 
             self.meta_model.lr_inner = 1e-5
             self.meta_model.test(self.train_loader, self.model)
         error_all = []
