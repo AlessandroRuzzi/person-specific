@@ -84,17 +84,18 @@ class Tasks(object):
         # Select tasks for which min. 1000 entries exist
         with open("data/train_test_split.json", "r") as f:
             datastore = json.load(f)
-      
+        print("ciao")
         train_keys = datastore["train"] 
-        self.selected_tasks = train_keys
-        
         path = "/data/aruzzi/xgaze_meta"    
+        
+        self.selected_tasks = train_keys
         self.num_tasks = len(self.selected_tasks)
-
+        print("ciao2")
         # Now load in all data into memory for selected tasks
         self.processed_data = []
         num_entries_tot = 0
         for task in self.selected_tasks:
+            print("ciao3")
             self.data = h5py.File(os.path.join(path,task), 'r')
             num_entries = self.data["gaze"].len()
             num_entries_tot += num_entries
