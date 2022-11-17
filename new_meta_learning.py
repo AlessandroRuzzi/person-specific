@@ -87,8 +87,8 @@ class Tasks(object):
         train_keys = datastore["train"] 
         path = "/data/aruzzi/xgaze_meta"    
         
-        #self.selected_tasks = train_keys
-        self.num_tasks = len(self.selected_tasks)
+        self.selected_tasks = train_keys
+        #self.num_tasks = len(self.selected_tasks)
         self.num_tasks = 1
         # Now load in all data into memory for selected tasks
         self.processed_data = []
