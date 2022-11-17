@@ -102,6 +102,7 @@ class Tasks(object):
             ], axis=1)
             ys = pitchyaw_to_vector(np.array(self.data["gaze"]).reshape(-1, 2))
             self.processed_data.append((xs, ys))
+            break
         print('Loaded %s (%d -> %d tasks)' % (os.path.basename(path),
                                               self.num_tasks,num_entries_tot))
 
