@@ -84,7 +84,7 @@ class Tasks(object):
         # Select tasks for which min. 1000 entries exist
         with open("data/train_test_split.json", "r") as f:
             datastore = json.load(f)
-        if subject==None:
+        if subject is None:
             train_keys = datastore["train"] 
             self.selected_tasks = train_keys
         else:
