@@ -35,6 +35,7 @@ range_angle = range_angle_set / 180.0 * math.pi  # the angle we set to be maxium
 # ratio loss, softmax, no index_better_var
 
 def vector_to_pitchyaw(vector):
+    print(vector)
     vector = vector / np.linalg.norm(vector)
     out = np.zeros((1, 2))
     out[0, 0] = np.arcsin(vector[0, 1])  # theta
@@ -439,6 +440,7 @@ class Trainer(object):
             #pred_gaze = self.linear_model(pred_gaze)
             #pred_gaze, pred_head = self.meta_model.model(input_var)
             pred_gaze_np = pred_gaze.cpu().data.numpy()
+            print(pred_gaze_np)
             pred_gaze_np = np.array([vector_to_pitchyaw(x) for x in pred_gaze_np]) 
             #pred_gaze_np = pred_gaze
             prediction_all.append(pred_gaze_np)
