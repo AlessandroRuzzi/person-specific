@@ -367,15 +367,19 @@ class Trainer(object):
                                  #input_file_name='ckpt/epoch_24_VGG_80_subj_ckpt.pth.tar')
                                  #input_file_name='ckpt/epoch_24_VGG_correct_small_ckpt.pth.tar')
                                  #input_file_name='ckpt/ram_epoch_24_ckpt.pth.tar')
+            print("here6")
             self.test_task = Tasks()
+            print("here7")
             sample_test, _ = self.test_task.sample(num_train=1, num_test=0)
+            print("here8")
             #self.gaze_estimator = GazeEstimationModelPreExtended()
             layer_num_features = [int(f) for f in "64".split(',')]
             layer_num_features = [sample_test[0].shape[1]] + layer_num_features + [3]
-        
+            print("here9")
             self.gaze_estimator = GazeEstimationModel(activation_type='selu',
                                         layer_num_features=layer_num_features)
             check_path = "outputs/MAML03/meta_learned_parameters_90000.pth.tar"
+            print("here10")
             weights = torch.load(check_path)
             print("here")
             try:
