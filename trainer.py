@@ -448,8 +448,9 @@ class Trainer(object):
             error_each = angular_error(pred_gaze_np, target_gaze_np)
             error = np.mean(error_each)
             error_all.append(error)
-
+            print(is_final)
             if not is_final:
+                print("here")
                 if i == show_interval:
                     mean_error = sum(error_all) / float(len(error_all))
                     print('Now go for test. I want this line to be Test error {0:.3f}\t'.format(mean_error))
