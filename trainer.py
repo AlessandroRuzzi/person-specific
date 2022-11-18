@@ -387,7 +387,7 @@ class Trainer(object):
             
             self.gaze_estimator = GazeEstimationModel(activation_type='selu',
                                         layer_num_features=layer_num_features)
-            check_path = "outputs/MAML_03/meta_learned_parameters_20000.pth.tar"
+            check_path = "outputs/MAML_03/meta_learned_parameters_100000.pth.tar"
             
             weights = torch.load(check_path)
             
