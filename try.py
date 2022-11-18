@@ -7,7 +7,7 @@ gaze_estimator_real = [9.1816, 8.8344, 7.5443, 7.0526, 6.5745, 6.4363, 6.2372, 6
 
 gaze_estimator_generated = [6.9404,6.4128, 6.3792, 6.1194, 6.3165, 6.2466, 6.1404, 5.9907 ,5.8149]
 gaze_estimator_real = [9.251, 9.034, 8.7359, 7.9428, 6.8732, 6.9114, 6.7033, 6.7695, 6.5758]
-gaze_estimator_sted = [8.6658, ]
+gaze_estimator_sted = [8.6658, 8.5369, 8.9516, 8.8345, 7.9395, 8.2456, 8.0952, 8.1384, 7.8492]
 
 #gaze_estimator_generated = [6.8913, 6.3796, 6.5055, 6.1899, 6.3682, 6.2284, 6.0725, 5.9959, 5.6748, 5.9804]
 #gaze_estimator_real = [12.318, 11.2155, 8.7523, 7.9366, 8.1317, 8.5618, 7.8733, 7.4974, 7.6556, 7.4697]
@@ -18,14 +18,16 @@ csfont = {'fontname':'Times New Roman'}
 f, ax = plt.subplots()
 ax.autoscale(enable=True, axis='x', tight=True)
 ax.set_aspect('equal')
-plt.plot(x_axis, gaze_estimator_generated, color='red', marker='o', label ="Real + Generated Samples")
-plt.plot(x_axis, gaze_estimator_real, color='blue', marker='o', label ="Real Samples")
+plt.ylim(5.5, 10.5)
+plt.plot(x_axis, gaze_estimator_real, color='blue', marker='o', label ="Real Samples Only")
+plt.plot(x_axis, gaze_estimator_sted, color='green', marker='o', label ="Real + Generated Samples (STED)")
+plt.plot(x_axis, gaze_estimator_generated, color='red', marker='o', label ="Real + Generated Sample (ours)")
 plt.title('', fontsize=14, **csfont)
 plt.xticks(x_axis)
-plt.xlabel('Number of real samples', fontsize=17, **csfont)
-plt.ylabel('Error (degrees)', fontsize=17, **csfont)
+plt.xlabel('Number of real samples', fontsize=16, **csfont)
+plt.ylabel('Error (degrees)', fontsize=16, **csfont)
 plt.grid(True)
-plt.legend(loc="upper right", prop={'size': 14, 'family': 'Times New Roman'})
+plt.legend(loc="upper right", prop={'size': 13.8, 'family': 'Times New Roman'})
 plt.show()
 
-f.savefig("personal_calibration.pdf", bbox_inches='tight')
+f.savefig("personal_calibration_with_sted.pdf", bbox_inches='tight')
